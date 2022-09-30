@@ -1,5 +1,5 @@
 import { Engine } from 'src/engine/engine';
-import { GameState } from 'src/states/game-state';
+import { GameStage } from 'src/game/game-stage';
 
 const SCREEN_WIDTH = 400;
 const SCREEN_HEIGHT = 240;
@@ -10,17 +10,18 @@ const context = canvas.getContext('2d')!;
 function tick(): void {
   context.fillStyle = Engine.instance.secondaryColor;
   context.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+  context.fillStyle = Engine.instance.primaryColor;
 
-  const state = Engine.instance.activeState!;
-  state.update();
-  state.render(context);
+  const stage = Engine.instance.activeStage!;
+  stage.update();
+  stage.render(context);
 
   requestAnimationFrame(tick);
 }
 
 (function main(): void {
-  const initialState = new GameState();
-  Engine.instance.changeState(initialState);
+  const initialStage = new GameStage();
+  Engine.instance.changeStage(initialStage);
 
   tick();
 }());

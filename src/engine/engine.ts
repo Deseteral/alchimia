@@ -1,13 +1,13 @@
-import { State } from 'src/engine/state';
+import { Stage } from 'src/engine/stage';
 
 export class Engine {
-  activeState: (State | null) = null;
+  activeStage: (Stage | null) = null;
 
   primaryColor: string = '#363636';
   secondaryColor: string = '#ffda9e';
 
-  changeState(nextState: State): void {
-    this.activeState = nextState;
+  changeStage(nextStage: Stage): void {
+    this.activeStage = nextStage;
   }
 
   static instance = new Engine();
