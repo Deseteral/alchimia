@@ -24,5 +24,5 @@ The game starts easy with limited ingridients and recipes. As you progress you u
 ## Ingridient actions
 - cutting (button mashing)
 - griding (mouse spinning?)
-- burning (keeping falling indicator in the right place?)
-- enchanting (qte?)
+- burning (keeping falling indicator in the right place)
+- enchanting (qte)
