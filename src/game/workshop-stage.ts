@@ -14,11 +14,15 @@ class ClientTable extends Table {
 
   update(): void {
     if (this.isInBookView) {
+      if (Input.getKeyDown('up')) this.isInBookView = false;
       if (Input.getKeyDown('left')) this.pageNumber -= 1;
       if (Input.getKeyDown('right')) this.pageNumber += 1;
 
       this.pageNumber = Math.clamp(this.pageNumber, 0, Math.ceil(RECIPES.length / 2) - 1);
-    } else if (Input.getKeyDown('right')) this.onNextTableCb();
+    } else {
+      if (Input.getKeyDown('right')) this.onNextTableCb();
+      if (Input.getKeyDown('down')) this.isInBookView = true;
+    }
   }
 
   render(ctx: CanvasRenderingContext2D): void {
