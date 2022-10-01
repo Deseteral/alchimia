@@ -8,5 +8,6 @@ module.exports = {
     'no-continue': 'off',
     'class-methods-use-this': 'off',
     'no-lone-blocks': 'off',
+    'max-classes-per-file': 'off',
   },
 };

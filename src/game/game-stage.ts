@@ -1,10 +1,46 @@
 import { Stage } from 'src/engine/stage';
+import { Table } from 'src/game/table';
 
-export class GameStage extends Stage {
+class ClientTable extends Table {
   update(): void {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    ctx.fillRect(100, 100, 20, 20);
+    ctx.fillRect(0, 0, 20, 20);
+  }
+}
+
+class IngridientsTable extends Table {
+  update(): void {
+  }
+
+  render(ctx: CanvasRenderingContext2D): void {
+    ctx.fillRect(0, 0, 40, 40);
+  }
+}
+
+class BrewingTable extends Table {
+  update(): void {
+  }
+
+  render(ctx: CanvasRenderingContext2D): void {
+    ctx.fillRect(0, 0, 60, 60);
+  }
+}
+
+export class GameStage extends Stage {
+  selectedTable = 0;
+  tables = [
+    new ClientTable(),
+    new IngridientsTable(),
+    new BrewingTable(),
+  ];
+
+  update(): void {
+    this.tables.forEach((table) => table.update());
+  }
+
+  render(ctx: CanvasRenderingContext2D): void {
+    this.tables[this.selectedTable].render(ctx);
   }
 }
