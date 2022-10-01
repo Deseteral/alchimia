@@ -10,6 +10,10 @@ Math.clamp = function clamp(num: number, min: number, max: number): number {
   return Math.min(Math.max(num, min), max);
 };
 
+Math.randomRange = function randomRange(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
 declare global {
   interface CanvasRenderingContext2D {
     drawRect(x: number, y: number, w: number, h: number): void;
@@ -17,6 +21,7 @@ declare global {
 
   interface Math {
     clamp(num: number, min: number, max: number): number;
+    randomRange(min: number, max: number): number;
   }
 }
 

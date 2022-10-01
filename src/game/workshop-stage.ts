@@ -101,20 +101,15 @@ class GrindingStation extends Station {
 }
 
 class BurningStation extends Station {
-  barHeight = 150;
-  cursorHeight = 30;
+  readonly barHeight = 150;
+  readonly cursorHeight = 30;
   cursorY = 0;
-  speed = 2;
-  gravity = 0.8;
 
-  targetY = 0;
-  nextTargetY = 0;
-
+  targetY = this.randomNextTargetY();
+  nextTargetY = this.randomNextTargetY();
   ticksToNextTarget = 50;
 
   progress = 0;
-  progressSpeed = 0.004;
-  progressDrain = this.progressSpeed / 2;
 
   onStationCompleteCallback: () => void;
 
@@ -123,12 +118,21 @@ class BurningStation extends Station {
     this.onStationCompleteCallback = onStationCompleteCallback;
   }
 
+  randomNextTargetY(): number {
+    return Math.randomRange(0, this.barHeight) | 0;
+  }
+
   update(): void {
+    const cursorSpeed = 2;
+    const gravity = 1;
+    const progressSpeed = 0.004;
+    const progressDrain = (progressSpeed / 2);
+
     this.ticksToNextTarget -= 1;
 
     // Move cursor
-    if (Input.getKey('a')) this.cursorY += this.speed;
-    this.cursorY -= this.gravity;
+    if (Input.getKey('a')) this.cursorY += cursorSpeed;
+    this.cursorY -= gravity;
     this.cursorY = Math.clamp(this.cursorY, 0, (this.barHeight - this.cursorHeight));
 
     // Move target to it's next position
@@ -136,17 +140,17 @@ class BurningStation extends Station {
 
     // Check if target is within cursor's range
     if (this.targetY >= this.cursorY && this.targetY <= (this.cursorY + this.cursorHeight)) {
-      this.progress += this.progressSpeed;
+      this.progress += progressSpeed;
     } else {
-      this.progress -= this.progressDrain;
+      this.progress -= progressDrain;
     }
 
-    this.progress = Math.clamp(this.progress, 0, 1.0);
+    this.progress = Math.clamp(this.progress, 0, 1);
 
     // Determine target's next position
     if (this.ticksToNextTarget <= 0) {
-      this.nextTargetY = (Math.random() * this.barHeight) | 0;
-      this.ticksToNextTarget = (60 + (Math.random() * (4 * 60))) | 0;
+      this.nextTargetY = this.randomNextTargetY();
+      this.ticksToNextTarget = Math.randomRange(60, 4 * 60);
     }
 
     // Winning condition
