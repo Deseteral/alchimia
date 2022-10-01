@@ -9,5 +9,6 @@ module.exports = {
     'class-methods-use-this': 'off',
     'no-lone-blocks': 'off',
     'max-classes-per-file': 'off',
+    'no-multi-assign': 'off',
   },
 };

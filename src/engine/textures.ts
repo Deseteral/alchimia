@@ -10,8 +10,19 @@ import cuttingUrl from 'url:../../assets/cutting.png';
 import enchantingUrl from 'url:../../assets/enchanting.png';
 // @ts-ignore
 import grindingUrl from 'url:../../assets/grinding.png';
+// @ts-ignore
+import enchantingKeyUpUrl from 'url:../../assets/enchanting_keyup.png';
+// @ts-ignore
+import enchantingKeyRightUrl from 'url:../../assets/enchanting_keyright.png';
+// @ts-ignore
+import enchantingKeyDownUrl from 'url:../../assets/enchanting_keydown.png';
+// @ts-ignore
+import enchantingKeyLeftUrl from 'url:../../assets/enchanting_keyleft.png';
 
-export type Texture = HTMLCanvasElement;
+export interface Texture {
+  normal: HTMLCanvasElement,
+  inverted: HTMLCanvasElement,
+}
 
 export abstract class Textures {
   static burningTexture: Texture;
@@ -19,6 +30,10 @@ export abstract class Textures {
   static enchantingTexture: Texture;
   static grindingTexture: Texture;
   static tableTexture: Texture;
+  static enchantingKeyUpTexture: Texture;
+  static enchantingKeyRightTexture: Texture;
+  static enchantingKeyDownTexture: Texture;
+  static enchantingKeyLeftTexture: Texture;
 
   static async loadTextures(): Promise<void> {
     Textures.burningTexture = await Textures.load(burningUrl);
@@ -26,6 +41,10 @@ export abstract class Textures {
     Textures.enchantingTexture = await Textures.load(enchantingUrl);
     Textures.grindingTexture = await Textures.load(grindingUrl);
     Textures.tableTexture = await Textures.load(tableUrl);
+    Textures.enchantingKeyUpTexture = await Textures.load(enchantingKeyUpUrl);
+    Textures.enchantingKeyRightTexture = await Textures.load(enchantingKeyRightUrl);
+    Textures.enchantingKeyDownTexture = await Textures.load(enchantingKeyDownUrl);
+    Textures.enchantingKeyLeftTexture = await Textures.load(enchantingKeyLeftUrl);
   }
 
   private static async load(url: string): Promise<Texture> {
@@ -36,14 +55,18 @@ export abstract class Textures {
     });
   }
 
-  private static processTexture(img: HTMLImageElement): HTMLCanvasElement {
+  private static processTexture(img: HTMLImageElement): Texture {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d')!;
+
+    const invertedCanvas = document.createElement('canvas');
+    const ictx = invertedCanvas.getContext('2d')!;
+
     const w = img.width;
     const h = img.height;
 
-    canvas.width = w;
-    canvas.height = h;
+    invertedCanvas.width = canvas.width = w;
+    invertedCanvas.height = canvas.height = h;
 
     ctx.drawImage(img, 0, 0);
 
@@ -58,8 +81,11 @@ export abstract class Textures {
 
       ctx.fillStyle = isBlack ? Engine.primaryColor : Engine.secondaryColor;
       ctx.fillRect(x, y, 1, 1);
+
+      ictx.fillStyle = (!isBlack) ? Engine.primaryColor : Engine.secondaryColor;
+      ictx.fillRect(x, y, 1, 1);
     }
 
-    return canvas;
+    return { normal: canvas, inverted: invertedCanvas };
   }
 }

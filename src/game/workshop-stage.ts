@@ -195,7 +195,7 @@ interface Note {
 }
 
 class EnchantmentStation extends Station {
-  readonly noteSize = 16;
+  readonly noteSize = 32;
   readonly hitLineX = 30 + ((this.noteSize / 2) | 0);
 
   noteSpeed: number = 3;
@@ -232,6 +232,7 @@ class EnchantmentStation extends Station {
 
           if (this.hitLineX >= note.pos && this.hitLineX <= (note.pos + this.noteSize)) {
             this.notes[idx].hit = true;
+            this.notes[idx].counted = true;
             noteWasHit = true;
             this.progress += 0.1;
           }
@@ -258,8 +259,11 @@ class EnchantmentStation extends Station {
     // Add new notes
     if (this.ticksToNextNote <= 0) {
       this.notes.push({ dir: Math.randomRange(0, 3), pos: (Engine.width + this.noteSize), hit: false, counted: false });
-      this.ticksToNextNote = Math.randomRange(30, 2 * 60);
+      this.ticksToNextNote = Math.randomRange(30, 80);
     }
+
+    // Removed old notes
+    this.notes = this.notes.filter((note) => (note.pos > -this.noteSize && !note.counted));
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -273,20 +277,29 @@ class EnchantmentStation extends Station {
     ctx.fillStyle = Engine.primaryColor;
     ctx.fillRect(0, clearHeight, Engine.width, 1);
 
-    // Note bar
-    ctx.fillRect(x, y + (0 * (this.noteSize + 5)), this.noteSize, this.noteSize);
-    ctx.fillRect(x, y + (1 * (this.noteSize + 5)), this.noteSize, this.noteSize);
-    ctx.fillRect(x, y + (2 * (this.noteSize + 5)), this.noteSize, this.noteSize);
-    ctx.fillRect(x, y + (3 * (this.noteSize + 5)), this.noteSize, this.noteSize);
-
     // Notes
     this.notes.forEach((note) => {
       if (note.hit) return;
 
       const nx = (note.pos | 0);
       const ny = y + (note.dir * (this.noteSize + 5));
-      ctx.fillRect(nx, ny, this.noteSize, this.noteSize);
+
+      if (note.dir === 0) {
+        ctx.drawImage(Textures.enchantingKeyUpTexture.inverted, nx, ny);
+      } else if (note.dir === 1) {
+        ctx.drawImage(Textures.enchantingKeyRightTexture.inverted, nx, ny);
+      } else if (note.dir === 2) {
+        ctx.drawImage(Textures.enchantingKeyDownTexture.inverted, nx, ny);
+      } else if (note.dir === 3) {
+        ctx.drawImage(Textures.enchantingKeyLeftTexture.inverted, nx, ny);
+      }
     });
+
+    // Note bar
+    ctx.drawImage(Textures.enchantingKeyUpTexture.normal, x, y + (0 * (this.noteSize + 5)));
+    ctx.drawImage(Textures.enchantingKeyRightTexture.normal, x, y + (1 * (this.noteSize + 5)));
+    ctx.drawImage(Textures.enchantingKeyDownTexture.normal, x, y + (2 * (this.noteSize + 5)));
+    ctx.drawImage(Textures.enchantingKeyLeftTexture.normal, x, y + (3 * (this.noteSize + 5)));
 
     // Progress bar
     ctx.drawRect(5, 5, 100, 5);
@@ -322,9 +335,7 @@ class IngridientsTable extends Table {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    // ctx.fillRect(0, 0, 50, 50);
-
-    ctx.drawImage(Textures.tableTexture, 0, 0);
+    ctx.drawImage(Textures.tableTexture.normal, 0, 0);
 
     this.drawStation(Textures.cuttingTexture, 50, 110, this.selectedStation === 0, ctx);
     this.drawStation(Textures.grindingTexture, 120, 110, this.selectedStation === 1, ctx);
@@ -335,8 +346,8 @@ class IngridientsTable extends Table {
   }
 
   private drawStation(texture: Texture, x: number, y: number, isSelected: boolean, ctx: CanvasRenderingContext2D): void {
-    if (isSelected) ctx.drawRect(x, y, texture.width, texture.height);
-    ctx.drawImage(texture, x, y);
+    if (isSelected) ctx.drawRect(x, y, texture.normal.width, texture.normal.height);
+    ctx.drawImage(texture.normal, x, y);
   }
 
   private exitStation(): void {
