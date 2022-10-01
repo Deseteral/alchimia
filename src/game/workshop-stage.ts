@@ -388,8 +388,14 @@ class BrewingTable extends Table {
   ingredientCursor = 0;
   showList = false;
   ingridiendsInside: PreparedIngredient[] = [];
+  ticksUntilBrewingDone = 0;
+
+  bubbleParticles: ({ x: number, y: number, velocity: number, isSmall: boolean, offset: number })[] = [];
+  ticksUntilNextBubble = 0;
 
   update(): void {
+    this.ticksUntilBrewingDone -= 1;
+
     if (this.showList) {
       if (Input.getKeyDown('up')) this.ingredientCursor -= 1;
       if (Input.getKeyDown('down')) this.ingredientCursor += 1;
@@ -407,12 +413,32 @@ class BrewingTable extends Table {
 
       this.ingredientCursor = Math.clamp(this.ingredientCursor, 0, Engine.state.preparedIngredients.length - 1);
     } else {
+      this.ticksUntilNextBubble -= 1;
+
       if (Input.getKeyDown('left')) this.onPreviousTableCb();
       if (Input.getKeyDown('a')) {
         this.resetListState();
         this.showList = true;
       }
+
+      if (this.ticksUntilNextBubble <= 0 && this.ticksUntilBrewingDone > 0) {
+        this.bubbleParticles.push({
+          x: Math.randomRange(280, 330),
+          y: Math.randomRange(80, 100),
+          velocity: 0,
+          isSmall: Math.random() > 0.5,
+          offset: Math.randomRange(0, 1000),
+        });
+        this.ticksUntilNextBubble = Math.randomRange(10, 30);
+      }
+
+      for (let i = 0; i < this.bubbleParticles.length; i += 1) {
+        this.bubbleParticles[i].velocity += 0.01;
+        this.bubbleParticles[i].y -= this.bubbleParticles[i].velocity;
+      }
     }
+
+    this.bubbleParticles = this.bubbleParticles.filter((b) => b.y > -10);
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -426,6 +452,11 @@ class BrewingTable extends Table {
         });
       });
     }
+
+    this.bubbleParticles.forEach((bubble) => {
+      const t = bubble.isSmall ? Textures.bubbleSmallTexture : Textures.bubbleLargeTexture;
+      ctx.drawImage(t.normal, bubble.x + (Math.sin((Engine.ticks + bubble.offset) / 25) * 3) | 0, bubble.y);
+    });
   }
 
   private resetListState(): void {

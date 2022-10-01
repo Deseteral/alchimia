@@ -19,6 +19,7 @@ function tick(): void {
 
   Input.update();
 
+  Engine.ticks += 1;
   requestAnimationFrame(tick);
 }
 

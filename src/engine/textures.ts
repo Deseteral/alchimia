@@ -22,6 +22,10 @@ import enchantingKeyLeftUrl from 'url:../../assets/enchanting_keyleft.png';
 import cauldronUrl from 'url:../../assets/cauldron.png';
 // @ts-ignore
 import frameUrl from 'url:../../assets/frame.png';
+// @ts-ignore
+import bubbleSmallUrl from 'url:../../assets/bubble_small.png';
+// @ts-ignore
+import bubbleLargeUrl from 'url:../../assets/bubble_large.png';
 
 export interface Texture {
   normal: HTMLCanvasElement,
@@ -40,6 +44,8 @@ export abstract class Textures {
   static enchantingKeyLeftTexture: Texture;
   static cauldronTexture: Texture;
   static frameTexture: Texture;
+  static bubbleSmallTexture: Texture;
+  static bubbleLargeTexture: Texture;
 
   static async loadTextures(): Promise<void> {
     Textures.burningTexture = await Textures.load(burningUrl);
@@ -53,6 +59,8 @@ export abstract class Textures {
     Textures.enchantingKeyLeftTexture = await Textures.load(enchantingKeyLeftUrl);
     Textures.cauldronTexture = await Textures.load(cauldronUrl);
     Textures.frameTexture = await Textures.load(frameUrl);
+    Textures.bubbleSmallTexture = await Textures.load(bubbleSmallUrl);
+    Textures.bubbleLargeTexture = await Textures.load(bubbleLargeUrl);
   }
 
   private static async load(url: string): Promise<Texture> {
