@@ -5,11 +5,11 @@ const canvas = document.querySelector('canvas')!;
 const context = canvas.getContext('2d')!;
 
 function tick(): void {
-  context.fillStyle = Engine.instance.secondaryColor;
-  context.fillRect(0, 0, Engine.instance.width, Engine.instance.height);
-  context.fillStyle = Engine.instance.primaryColor;
+  context.fillStyle = Engine.secondaryColor;
+  context.fillRect(0, 0, Engine.width, Engine.height);
+  context.fillStyle = Engine.primaryColor;
 
-  const stage = Engine.instance.activeStage!;
+  const stage = Engine.activeStage!;
   stage.update();
   stage.render(context);
 
@@ -18,7 +18,7 @@ function tick(): void {
 
 (function main(): void {
   const initialStage = new GameStage();
-  Engine.instance.changeStage(initialStage);
+  Engine.changeStage(initialStage);
 
   tick();
 }());

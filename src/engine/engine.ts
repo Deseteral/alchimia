@@ -1,16 +1,14 @@
 import { Stage } from 'src/engine/stage';
 
-export class Engine {
-  activeStage: (Stage | null) = null;
+export abstract class Engine {
+  static activeStage: (Stage | null) = null;
 
-  width = 400;
-  height = 240;
-  primaryColor: string = '#363636';
-  secondaryColor: string = '#ffda9e';
+  static readonly width = 400;
+  static readonly height = 240;
+  static readonly primaryColor: string = '#363636';
+  static readonly secondaryColor: string = '#ffda9e';
 
-  changeStage(nextStage: Stage): void {
+  static changeStage(nextStage: Stage): void {
     this.activeStage = nextStage;
   }
-
-  static instance = new Engine();
 }
