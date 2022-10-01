@@ -4,16 +4,35 @@ import { drawFrame } from 'src/engine/frame';
 import { Input, Keys } from 'src/engine/input';
 import { Stage } from 'src/engine/stage';
 import { Texture, Textures } from 'src/engine/textures';
-import { IngredientAction, PreparedIngredient } from 'src/game/game-state';
+import { Ingredient, IngredientAction, PreparedIngredient } from 'src/game/ingredients';
+import { drawRecipe, RECIPES } from 'src/game/recipes';
 import { Table } from 'src/game/table';
 
 class ClientTable extends Table {
+  isInBookView: boolean = true;
+  pageNumber = 0;
+
   update(): void {
-    if (Input.getKeyDown('right')) this.onNextTableCb();
+    if (this.isInBookView) {
+      if (Input.getKeyDown('left')) this.pageNumber -= 1;
+      if (Input.getKeyDown('right')) this.pageNumber += 1;
+
+      this.pageNumber = Math.clamp(this.pageNumber, 0, Math.ceil(RECIPES.length / 2) - 1);
+    } else if (Input.getKeyDown('right')) this.onNextTableCb();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    ctx.fillRect(0, 0, 20, 20);
+    if (this.isInBookView) {
+      ctx.drawImage(Textures.bookTexture.normal, 0, 0);
+
+      const r1 = RECIPES[this.pageNumber * 2];
+      const r2 = RECIPES[this.pageNumber * 2 + 1];
+      if (r1) drawRecipe(r1, 60, 20, ctx);
+      if (r2) drawRecipe(r2, 225, 20, ctx);
+
+      Font.draw(`${this.pageNumber * 2 + 1}`, 50, 200, ctx);
+      Font.draw(`${this.pageNumber * 2 + 2}`, 350, 200, ctx);
+    }
   }
 }
 
@@ -338,7 +357,7 @@ class IngredientsTable extends Table {
     if (Input.getKeyDown('a')) {
       const cb: StationCompleteCallback = (success: boolean, action: IngredientAction) => {
         if (success) {
-          Engine.state.preparedIngredients.push({ ingredient: 'grass', action });
+          Engine.state.preparedIngredients.push({ ingredient: Ingredient.HERB, action });
         }
         this.exitStation();
       };
@@ -466,7 +485,7 @@ class BrewingTable extends Table {
 }
 
 export class WorkshopStage extends Stage {
-  selectedTable = 2;
+  selectedTable = 0;
   tables = [
     new ClientTable(() => this.nextTable(), () => this.prevTable()),
     new IngredientsTable(() => this.nextTable(), () => this.prevTable()),
