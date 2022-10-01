@@ -52,6 +52,28 @@ class CuttingStation extends Station {
   }
 }
 
+class GrindingStation extends Station {
+  positionX = 200;
+  positionY = 75;
+  radius = this.positionY - 5;
+
+  onStationCompleteCallback: () => void;
+
+  constructor(onStationCompleteCallback: () => void) {
+    super();
+    this.onStationCompleteCallback = onStationCompleteCallback;
+  }
+
+  update(): void {
+  }
+
+  render(ctx: CanvasRenderingContext2D): void {
+    ctx.beginPath();
+    ctx.arc(this.positionX, this.positionY, this.radius, 0, Math.PI * 2, false);
+    ctx.fill();
+  }
+}
+
 class IngridientsTable extends Table {
   selectedStation = 0;
   activeStation: (Station | null) = null;
@@ -59,15 +81,20 @@ class IngridientsTable extends Table {
   update(): void {
     if (this.activeStation) {
       this.activeStation.update();
-    } else {
-      if (Input.getKeyDown('a')) {
-        this.activeStation = new CuttingStation(() => this.exitStation());
-      }
-
-      if (Input.getKeyDown('right')) this.selectedStation += 1;
-      if (Input.getKeyDown('left')) this.selectedStation -= 1;
-      this.selectedStation = Math.clamp(this.selectedStation, 0, 3);
+      return;
     }
+
+    if (Input.getKeyDown('a')) {
+      if (this.selectedStation === 0) {
+        this.activeStation = new CuttingStation(() => this.exitStation());
+      } else if (this.selectedStation === 1) {
+        this.activeStation = new GrindingStation(() => this.exitStation());
+      }
+    }
+
+    if (Input.getKeyDown('right')) this.selectedStation += 1;
+    if (Input.getKeyDown('left')) this.selectedStation -= 1;
+    this.selectedStation = Math.clamp(this.selectedStation, 0, 3);
   }
 
   render(ctx: CanvasRenderingContext2D): void {
