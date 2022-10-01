@@ -1,3 +1,5 @@
+import { Engine } from 'src/engine/engine';
+
 interface KeyState {
   up: boolean,
   down: boolean,
@@ -11,6 +13,9 @@ interface KeyState {
 type Keys = keyof KeyState;
 
 export abstract class Input {
+  static pointerX: number = 0;
+  static pointerY: number = 0;
+
   private static keyState: KeyState = {
     up: false, down: false, right: false, left: false, a: false, b: false,
   };
@@ -31,7 +36,7 @@ export abstract class Input {
     Input.previousKeyState = { ...Input.keyState };
   }
 
-  static initialize(): void {
+  static initialize(canvas: HTMLCanvasElement): void {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'w') Input.keyState.up = true;
       if (e.key === 's') Input.keyState.down = true;
@@ -51,5 +56,13 @@ export abstract class Input {
       if (e.key === 'Enter') Input.keyState.a = false;
       if (e.key === 'Escape') Input.keyState.b = false;
     }, false);
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+      const x = (e.clientX - rect.left) | 0;
+      const y = (e.clientY - rect.top) | 0;
+      Input.pointerX = ((x / canvas.clientWidth) * Engine.width) | 0;
+      Input.pointerY = ((y / canvas.clientHeight) * Engine.height) | 0;
+    });
   }
 }

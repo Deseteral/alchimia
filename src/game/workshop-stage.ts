@@ -56,6 +56,8 @@ class GrindingStation extends Station {
   positionX = 200;
   positionY = 75;
   radius = this.positionY - 5;
+  targets = [0, 90, 180, 90];
+  progress = 0;
 
   onStationCompleteCallback: () => void;
 
@@ -65,12 +67,33 @@ class GrindingStation extends Station {
   }
 
   update(): void {
+    const x = Input.pointerX - this.positionX;
+    const y = -(Input.pointerY - this.positionY);
+    const deg = Math.atan2(y, x) * (180 / Math.PI);
+    const value = Math.abs(deg | 0);
+
+    const target = this.targets[0];
+    const offsetDeg = 5;
+    const targetHit = (value >= (target - offsetDeg) && value <= (target + offsetDeg));
+
+    if (targetHit) {
+      // Move current target to the back of array
+      const firstElement = this.targets.shift()!;
+      this.targets.push(firstElement);
+
+      this.progress += 0.05; // TODO: Randomize progress value
+    }
+
+    if (this.progress >= 1) this.onStationCompleteCallback();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
     ctx.beginPath();
     ctx.arc(this.positionX, this.positionY, this.radius, 0, Math.PI * 2, false);
     ctx.fill();
+
+    ctx.drawRect(5, 5, 100, 20);
+    ctx.fillRect(5, 5, (100 * this.progress) | 0, 20);
   }
 }
 

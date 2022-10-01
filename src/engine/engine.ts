@@ -13,8 +13,8 @@ export abstract class Engine {
 
   static state: GameState;
 
-  static initialize(): void {
-    Input.initialize();
+  static initialize(canvas: HTMLCanvasElement): void {
+    Input.initialize(canvas);
   }
 
   static update(): void {

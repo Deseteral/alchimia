@@ -21,7 +21,7 @@ function tick(): void {
 }
 
 (async function main(): Promise<void> {
-  Engine.initialize();
+  Engine.initialize(canvas);
 
   canvas.width = Engine.width;
   canvas.height = Engine.height;
