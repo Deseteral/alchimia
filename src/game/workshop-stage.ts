@@ -9,34 +9,12 @@ import { drawRecipe, RECIPES } from 'src/game/recipes';
 import { Table } from 'src/game/table';
 
 class ClientTable extends Table {
-  isInBookView: boolean = true;
-  pageNumber = 0;
-
   update(): void {
-    if (this.isInBookView) {
-      if (Input.getKeyDown('up')) this.isInBookView = false;
-      if (Input.getKeyDown('left')) this.pageNumber -= 1;
-      if (Input.getKeyDown('right')) this.pageNumber += 1;
-
-      this.pageNumber = Math.clamp(this.pageNumber, 0, Math.ceil(RECIPES.length / 2) - 1);
-    } else {
-      if (Input.getKeyDown('right')) this.onNextTableCb();
-      if (Input.getKeyDown('down')) this.isInBookView = true;
-    }
+    if (Input.getKeyDown('right')) this.onNextTableCb();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    if (this.isInBookView) {
-      ctx.drawImage(Textures.bookTexture.normal, 0, 0);
-
-      const r1 = RECIPES[this.pageNumber * 2];
-      const r2 = RECIPES[this.pageNumber * 2 + 1];
-      if (r1) drawRecipe(r1, 60, 20, ctx);
-      if (r2) drawRecipe(r2, 225, 20, ctx);
-
-      Font.draw(`${this.pageNumber * 2 + 1}`, 50, 200, ctx);
-      Font.draw(`${this.pageNumber * 2 + 2}`, 350, 200, ctx);
-    }
+    ctx.fillRect(10, 10, 50, 50);
   }
 }
 
@@ -496,13 +474,27 @@ export class WorkshopStage extends Stage {
     new BrewingTable(() => this.nextTable(), () => this.prevTable()),
   ];
 
+  isInBookView: boolean = false;
+  pageNumber = 0;
+
   update(): void {
+    if (this.isInBookView) {
+      this.updateBook();
+      return;
+    }
+
+    if (Input.getKeyDown('down')) this.isInBookView = true;
+
     this.tables[this.selectedTable].update();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
     // TODO: Add sliding between tables
     this.tables[this.selectedTable].render(ctx);
+
+    if (this.isInBookView) {
+      this.renderBook(ctx);
+    }
 
     ctx.drawRect(0, 0, Engine.width, Engine.height);
   }
@@ -515,5 +507,25 @@ export class WorkshopStage extends Stage {
   prevTable(): void {
     this.selectedTable -= 1;
     this.selectedTable = Math.clamp(this.selectedTable, 0, 2);
+  }
+
+  private updateBook(): void {
+    if (Input.getKeyDown('up')) this.isInBookView = false;
+    if (Input.getKeyDown('left')) this.pageNumber -= 1;
+    if (Input.getKeyDown('right')) this.pageNumber += 1;
+
+    this.pageNumber = Math.clamp(this.pageNumber, 0, Math.ceil(RECIPES.length / 2) - 1);
+  }
+
+  private renderBook(ctx: CanvasRenderingContext2D): void {
+    ctx.drawImage(Textures.bookTexture.normal, 0, 0);
+
+    const r1 = RECIPES[this.pageNumber * 2];
+    const r2 = RECIPES[this.pageNumber * 2 + 1];
+    if (r1) drawRecipe(r1, 60, 20, ctx);
+    if (r2) drawRecipe(r2, 225, 20, ctx);
+
+    Font.draw(`${this.pageNumber * 2 + 1}`, 50, 200, ctx);
+    Font.draw(`${this.pageNumber * 2 + 2}`, 350, 200, ctx);
   }
 }
