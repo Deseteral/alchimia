@@ -12,6 +12,7 @@ import { Ingredient, IngredientAction, ingredientDisplayName, Ingredients, Prepa
 import { drawPreparedIngredientRow, drawRecipe, getIngredientIcon, RECIPES } from 'src/game/recipes';
 import { Station, StationCompleteCallback } from 'src/game/stations/station';
 import { Table } from 'src/game/table';
+import { findMatchingRecipe } from 'src/game/recipe-logic';
 
 class ClientTable extends Table {
   update(): void {
@@ -125,9 +126,13 @@ class IngredientsTable extends Table {
 }
 
 class BrewingTable extends Table {
-  ingredientCursor = 0;
   showList = false;
-  ingridiendsInside: PreparedIngredient[] = [];
+
+  ingredientCursor = 0;
+  selectedIngredientCursor = 0;
+  selectedIngredients: PreparedIngredient[] = [];
+  leftColumn = true;
+
   ticksUntilBrewingDone = 0;
 
   bubbleParticles: ({ x: number, y: number, velocity: number, isSmall: boolean, offset: number })[] = [];
@@ -137,48 +142,93 @@ class BrewingTable extends Table {
     this.ticksUntilBrewingDone -= 1;
 
     if (this.showList) {
-      if (Input.getKeyDown('up')) this.ingredientCursor -= 1;
-      if (Input.getKeyDown('down')) this.ingredientCursor += 1;
+      if (Input.getKeyDown('up')) {
+        if (this.leftColumn) {
+          this.ingredientCursor -= 1;
+        } else {
+          this.selectedIngredientCursor -= 1;
+        }
+      } else if (Input.getKeyDown('down')) {
+        if (this.leftColumn) {
+          this.ingredientCursor += 1;
+        } else {
+          this.selectedIngredientCursor += 1;
+        }
+      }
+
+      if (Input.getKeyDown('left') && Engine.state.preparedIngredients.length > 0) {
+        this.leftColumn = true;
+      } else if (Input.getKeyDown('right') && this.selectedIngredients.length > 0) {
+        this.selectedIngredientCursor = this.selectedIngredients.length;
+        this.leftColumn = false;
+      }
+
       if (Input.getKeyDown('b')) {
-        Engine.state.preparedIngredients.push(...this.ingridiendsInside);
+        Engine.state.preparedIngredients.push(...this.selectedIngredients);
         this.resetListState();
         this.showList = false;
       }
 
       if (Input.getKeyDown('a')) {
-        const [ing] = Engine.state.preparedIngredients.splice(this.ingredientCursor, 1);
-        this.ingridiendsInside.push(ing);
-        this.ingredientCursor -= 1;
+        if (this.leftColumn) {
+          if (Engine.state.preparedIngredients.length > 0) {
+            const [ing] = Engine.state.preparedIngredients.splice(this.ingredientCursor, 1);
+            this.selectedIngredients.push(ing);
+            this.ingredientCursor -= 1;
+
+            if (Engine.state.preparedIngredients.length === 0) {
+              this.selectedIngredientCursor = this.selectedIngredients.length;
+              this.leftColumn = false;
+            }
+          }
+        } else {
+          if (this.selectedIngredientCursor === this.selectedIngredients.length) {
+            const r = findMatchingRecipe(this.selectedIngredients);
+            if (r) console.log('found recipe', r); else console.log('recipe not found');
+
+            this.resetListState();
+            this.showList = false;
+          } else {
+            const [ing] = this.selectedIngredients.splice(this.selectedIngredientCursor, 1);
+            Engine.state.preparedIngredients.push(ing);
+            this.selectedIngredientCursor -= 1;
+
+            if (this.selectedIngredients.length === 0) this.leftColumn = true;
+          }
+        }
       }
 
       this.ingredientCursor = Math.clamp(this.ingredientCursor, 0, Engine.state.preparedIngredients.length - 1);
-    } else {
-      this.ticksUntilNextBubble -= 1;
+      this.selectedIngredientCursor = Math.clamp(this.selectedIngredientCursor, 0, this.selectedIngredients.length);
 
-      if (Input.getKeyDown('left')) {
-        this.onPreviousTableCb();
-      } else if (Input.getKeyDown('a')) {
-        this.resetListState();
-        this.showList = true;
-      } else if (Input.getKeyDown('down')) {
-        this.openBook();
-      }
+      return;
+    }
 
-      if (this.ticksUntilNextBubble <= 0 && this.ticksUntilBrewingDone > 0) {
-        this.bubbleParticles.push({
-          x: Math.randomRange(280, 330),
-          y: Math.randomRange(80, 100),
-          velocity: 0,
-          isSmall: Math.random() > 0.5,
-          offset: Math.randomRange(0, 1000),
-        });
-        this.ticksUntilNextBubble = Math.randomRange(10, 30);
-      }
+    this.ticksUntilNextBubble -= 1;
 
-      for (let i = 0; i < this.bubbleParticles.length; i += 1) {
-        this.bubbleParticles[i].velocity += 0.01;
-        this.bubbleParticles[i].y -= this.bubbleParticles[i].velocity;
-      }
+    if (Input.getKeyDown('left')) {
+      this.onPreviousTableCb();
+    } else if (Input.getKeyDown('a')) {
+      this.resetListState();
+      this.showList = true;
+    } else if (Input.getKeyDown('down')) {
+      this.openBook();
+    }
+
+    if (this.ticksUntilNextBubble <= 0 && this.ticksUntilBrewingDone > 0) {
+      this.bubbleParticles.push({
+        x: Math.randomRange(280, 330),
+        y: Math.randomRange(80, 100),
+        velocity: 0,
+        isSmall: Math.random() > 0.5,
+        offset: Math.randomRange(0, 1000),
+      });
+      this.ticksUntilNextBubble = Math.randomRange(10, 30);
+    }
+
+    for (let i = 0; i < this.bubbleParticles.length; i += 1) {
+      this.bubbleParticles[i].velocity += 0.01;
+      this.bubbleParticles[i].y -= this.bubbleParticles[i].velocity;
     }
 
     this.bubbleParticles = this.bubbleParticles.filter((b) => b.y > -10);
@@ -189,12 +239,45 @@ class BrewingTable extends Table {
     ctx.drawImage(Textures.cauldronTexture.normal, 250, 70);
 
     if (this.showList) {
-      drawFrame(11, 11, 100, 218, ctx, () => {
-        Engine.state.preparedIngredients.forEach((pi, idx) => {
-          const yy = 10 + idx * (16 + 4);
-          if (idx === this.ingredientCursor) ctx.drawImage(Textures.listPointerRightTexture.normal, 11, yy);
+      const listWidth: number = 80;
+      const maxCountOnPage: number = 9;
+
+      drawFrame(11, 11, listWidth, 218, ctx, () => {
+        Font.draw('Storage', 12, 6, ctx);
+
+        const page: number = (this.ingredientCursor / maxCountOnPage) | 0;
+        const startIdx: number = page * maxCountOnPage;
+
+        for (let idx = startIdx; idx < Math.min(startIdx + 9, Engine.state.preparedIngredients.length); idx += 1) {
+          const pi: PreparedIngredient = Engine.state.preparedIngredients[idx];
+
+          const yy: number = Font.glyphSizeV + (idx % maxCountOnPage) * (16 + 4);
+          if (idx === this.ingredientCursor && this.leftColumn) ctx.drawImage(Textures.listPointerRightTexture.normal, 11, yy);
           drawPreparedIngredientRow(pi, 11 + 16 + 4, yy, ctx);
-        });
+        }
+      });
+
+      const rightColumnX: number = 11 + listWidth + 20;
+      drawFrame(rightColumnX, 11, listWidth, 218, ctx, () => {
+        Font.draw('Selected', rightColumnX + 1, 6, ctx);
+
+        const page: number = (this.selectedIngredientCursor / maxCountOnPage) | 0;
+        const startIdx: number = page * maxCountOnPage;
+        const pageCount: number = Math.ceil((this.selectedIngredients.length + 1) / maxCountOnPage);
+
+        for (let idx = startIdx; idx < Math.min(startIdx + 9, this.selectedIngredients.length); idx += 1) {
+          const pi: PreparedIngredient = this.selectedIngredients[idx];
+
+          const yy: number = Font.glyphSizeV + (idx % maxCountOnPage) * (16 + 4);
+          if (idx === this.selectedIngredientCursor && !this.leftColumn) ctx.drawImage(Textures.listPointerRightTexture.normal, rightColumnX, yy);
+          drawPreparedIngredientRow(pi, rightColumnX + 16 + 4, yy, ctx);
+        }
+
+        if (this.selectedIngredients.length > 0 && page === (pageCount - 1)) {
+          const yy: number = Font.glyphSizeV + (this.selectedIngredients.length % maxCountOnPage) * (16 + 4);
+          if (this.selectedIngredientCursor === this.selectedIngredients.length && !this.leftColumn) ctx.drawImage(Textures.listPointerRightTexture.normal, rightColumnX, yy + 5);
+          Font.draw('Brew!', rightColumnX + 16 + 4, yy, ctx);
+        }
       });
     }
 
@@ -206,7 +289,9 @@ class BrewingTable extends Table {
 
   private resetListState(): void {
     this.ingredientCursor = 0;
-    this.ingridiendsInside = [];
+    this.selectedIngredientCursor = 0;
+    this.leftColumn = true;
+    this.selectedIngredients = [];
   }
 }
 

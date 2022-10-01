@@ -10,5 +10,6 @@ module.exports = {
     'no-lone-blocks': 'off',
     'max-classes-per-file': 'off',
     'no-multi-assign': 'off',
+    'no-lonely-if': 'off',
   },
 };

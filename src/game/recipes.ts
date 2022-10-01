@@ -12,31 +12,15 @@ export const RECIPES: Recipe[] = [
     name: 'Potion 1',
     ingredients: [
       { ingredient: Ingredient.HERB, action: IngredientAction.CUTTING },
-      { ingredient: Ingredient.STONE, action: IngredientAction.GRIDING },
-      { ingredient: Ingredient.MUSHROOM, action: IngredientAction.BURNING },
-      { ingredient: Ingredient.GOLD, action: IngredientAction.ENCHANTING },
-      { ingredient: Ingredient.FLOWER, action: IngredientAction.ENCHANTING },
     ],
   }, {
     name: 'Potion 2',
     ingredients: [
       { ingredient: Ingredient.HERB, action: IngredientAction.CUTTING },
       { ingredient: Ingredient.STONE, action: IngredientAction.GRIDING },
-      { ingredient: Ingredient.MUSHROOM, action: IngredientAction.BURNING },
-      { ingredient: Ingredient.GOLD, action: IngredientAction.ENCHANTING },
-      { ingredient: Ingredient.FLOWER, action: IngredientAction.ENCHANTING },
     ],
   }, {
     name: 'Potion 3',
-    ingredients: [
-      { ingredient: Ingredient.HERB, action: IngredientAction.CUTTING },
-      { ingredient: Ingredient.STONE, action: IngredientAction.GRIDING },
-      { ingredient: Ingredient.MUSHROOM, action: IngredientAction.BURNING },
-      { ingredient: Ingredient.GOLD, action: IngredientAction.ENCHANTING },
-      { ingredient: Ingredient.FLOWER, action: IngredientAction.ENCHANTING },
-    ],
-  }, {
-    name: 'Potion 4',
     ingredients: [
       { ingredient: Ingredient.HERB, action: IngredientAction.CUTTING },
       { ingredient: Ingredient.STONE, action: IngredientAction.GRIDING },

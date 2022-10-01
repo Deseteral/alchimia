@@ -2,6 +2,7 @@ import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { Input } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
+import { Ingredient, IngredientAction } from 'src/game/ingredients';
 import { WorkshopStage } from 'src/game/workshop-stage';
 
 const canvas = document.querySelector('canvas')!;
@@ -34,7 +35,19 @@ function tick(): void {
   await Textures.loadTextures();
 
   Engine.state = { // TODO: Add save/load functionality
-    preparedIngredients: [],
+    preparedIngredients: [
+      { action: IngredientAction.CUTTING, ingredient: Ingredient.MUSHROOM },
+      { action: IngredientAction.ENCHANTING, ingredient: Ingredient.FLOWER },
+      { action: IngredientAction.BURNING, ingredient: Ingredient.GOLD },
+      { action: IngredientAction.CUTTING, ingredient: Ingredient.HERB },
+      { action: IngredientAction.GRIDING, ingredient: Ingredient.STONE },
+      { action: IngredientAction.GRIDING, ingredient: Ingredient.MUSHROOM },
+      { ingredient: Ingredient.HERB, action: IngredientAction.CUTTING },
+      { ingredient: Ingredient.STONE, action: IngredientAction.GRIDING },
+      { ingredient: Ingredient.MUSHROOM, action: IngredientAction.BURNING },
+      { ingredient: Ingredient.GOLD, action: IngredientAction.ENCHANTING },
+      { ingredient: Ingredient.FLOWER, action: IngredientAction.ENCHANTING },
+    ],
   };
 
   const initialStage = new WorkshopStage();
