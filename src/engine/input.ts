@@ -38,20 +38,20 @@ export abstract class Input {
 
   static initialize(canvas: HTMLCanvasElement): void {
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'w') Input.keyState.up = true;
-      if (e.key === 's') Input.keyState.down = true;
-      if (e.key === 'a') Input.keyState.left = true;
-      if (e.key === 'd') Input.keyState.right = true;
+      if (e.key === 'w' || e.key === 'ArrowUp') Input.keyState.up = true;
+      if (e.key === 's' || e.key === 'ArrowDown') Input.keyState.down = true;
+      if (e.key === 'a' || e.key === 'ArrowLeft') Input.keyState.left = true;
+      if (e.key === 'd' || e.key === 'ArrowRight') Input.keyState.right = true;
 
       if (e.key === 'Enter') Input.keyState.a = true;
       if (e.key === 'Escape') Input.keyState.b = true;
     }, false);
 
     document.addEventListener('keyup', (e) => {
-      if (e.key === 'w') Input.keyState.up = false;
-      if (e.key === 's') Input.keyState.down = false;
-      if (e.key === 'a') Input.keyState.left = false;
-      if (e.key === 'd') Input.keyState.right = false;
+      if (e.key === 'w' || e.key === 'ArrowUp') Input.keyState.up = false;
+      if (e.key === 's' || e.key === 'ArrowDown') Input.keyState.down = false;
+      if (e.key === 'a' || e.key === 'ArrowLeft') Input.keyState.left = false;
+      if (e.key === 'd' || e.key === 'ArrowRight') Input.keyState.right = false;
 
       if (e.key === 'Enter') Input.keyState.a = false;
       if (e.key === 'Escape') Input.keyState.b = false;
