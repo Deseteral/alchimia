@@ -1,4 +1,5 @@
 import { Engine } from 'src/engine/engine';
+import { drawFrame } from 'src/engine/frame';
 import { Input, Keys } from 'src/engine/input';
 import { Stage } from 'src/engine/stage';
 import { Texture, Textures } from 'src/engine/textures';
@@ -394,6 +395,8 @@ class BrewingTable extends Table {
   render(ctx: CanvasRenderingContext2D): void {
     ctx.drawImage(Textures.tableTexture.normal, 0, 0);
     ctx.drawImage(Textures.cauldronTexture.normal, 250, 70);
+
+    drawFrame(10, 10, 100, 30, ctx);
   }
 }
 

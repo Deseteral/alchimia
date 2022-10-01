@@ -20,6 +20,8 @@ import enchantingKeyDownUrl from 'url:../../assets/enchanting_keydown.png';
 import enchantingKeyLeftUrl from 'url:../../assets/enchanting_keyleft.png';
 // @ts-ignore
 import cauldronUrl from 'url:../../assets/cauldron.png';
+// @ts-ignore
+import frameUrl from 'url:../../assets/frame.png';
 
 export interface Texture {
   normal: HTMLCanvasElement,
@@ -37,6 +39,7 @@ export abstract class Textures {
   static enchantingKeyDownTexture: Texture;
   static enchantingKeyLeftTexture: Texture;
   static cauldronTexture: Texture;
+  static frameTexture: Texture;
 
   static async loadTextures(): Promise<void> {
     Textures.burningTexture = await Textures.load(burningUrl);
@@ -49,6 +52,7 @@ export abstract class Textures {
     Textures.enchantingKeyDownTexture = await Textures.load(enchantingKeyDownUrl);
     Textures.enchantingKeyLeftTexture = await Textures.load(enchantingKeyLeftUrl);
     Textures.cauldronTexture = await Textures.load(cauldronUrl);
+    Textures.frameTexture = await Textures.load(frameUrl);
   }
 
   private static async load(url: string): Promise<Texture> {
