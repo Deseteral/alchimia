@@ -61,8 +61,10 @@ class GrindingStation extends Station {
   positionX = 200;
   positionY = 75;
   radius = this.positionY - 5;
-  targets = [0, 90, 180, 90];
+  targets = [0, 45, 90, 135, 180, 90];
   progress = 0;
+
+  progressDrawRadius = 0;
 
   onStationCompleteCallback: () => void;
 
@@ -88,7 +90,7 @@ class GrindingStation extends Station {
       const firstElement = this.targets.shift()!;
       this.targets.push(firstElement);
 
-      this.progress += 0.05; // TODO: Randomize progress value
+      this.progress += 0.03; // TODO: Randomize progress value
     }
 
     if (this.progress >= 1) this.onStationCompleteCallback();
@@ -96,12 +98,25 @@ class GrindingStation extends Station {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
+    // Frame
     ctx.beginPath();
+    ctx.fillStyle = Engine.primaryColor;
+    ctx.arc(this.positionX, this.positionY, this.radius + 2, 0, Math.PI * 2, false);
+    ctx.fill();
+
+    // Background
+    ctx.beginPath();
+    ctx.fillStyle = Engine.secondaryColor;
     ctx.arc(this.positionX, this.positionY, this.radius, 0, Math.PI * 2, false);
     ctx.fill();
 
-    ctx.drawRect(5, 5, 100, 20);
-    ctx.fillRect(5, 5, (100 * this.progress) | 0, 20);
+    // Progress fill
+    this.progressDrawRadius += ((this.progress * this.radius) - this.progressDrawRadius) * 0.1;
+
+    ctx.beginPath();
+    ctx.fillStyle = Engine.primaryColor;
+    ctx.arc(this.positionX, this.positionY, this.progressDrawRadius, 0, Math.PI * 2, false);
+    ctx.fill();
   }
 }
 
