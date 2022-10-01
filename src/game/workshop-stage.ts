@@ -36,7 +36,11 @@ class CuttingStation extends Station {
       this.progress += 0.05;
     }
 
+    this.progress -= 0.002;
+    this.progress = Math.clamp(this.progress, 0, 1);
+
     if (this.progress >= 1) this.onStationCompleteCallback();
+    if (Input.getKeyDown('b')) this.onStationCompleteCallback();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -44,11 +48,11 @@ class CuttingStation extends Station {
     ctx.fillRect(5, 5, (100 * this.progress) | 0, 20);
 
     if (this.left) {
-      ctx.fillRect(5, 30, 30, 30);
-      ctx.drawRect(40, 30, 30, 30);
+      ctx.drawImage(Textures.enchantingKeyLeftTexture.normal, 5, 30);
+      ctx.drawImage(Textures.enchantingKeyRightTexture.inverted, 40, 30);
     } else {
-      ctx.drawRect(5, 30, 30, 30);
-      ctx.fillRect(40, 30, 30, 30);
+      ctx.drawImage(Textures.enchantingKeyLeftTexture.inverted, 5, 30);
+      ctx.drawImage(Textures.enchantingKeyRightTexture.normal, 40, 30);
     }
   }
 }
@@ -88,6 +92,7 @@ class GrindingStation extends Station {
     }
 
     if (this.progress >= 1) this.onStationCompleteCallback();
+    if (Input.getKeyDown('b')) this.onStationCompleteCallback();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -131,7 +136,7 @@ class BurningStation extends Station {
     this.ticksToNextTarget -= 1;
 
     // Move cursor
-    if (Input.getKey('a')) this.cursorY += cursorSpeed;
+    if (Input.getKey('up')) this.cursorY += cursorSpeed;
     this.cursorY -= gravity;
     this.cursorY = Math.clamp(this.cursorY, 0, (this.barHeight - this.cursorHeight));
 
@@ -154,9 +159,8 @@ class BurningStation extends Station {
     }
 
     // Winning condition
-    if (this.progress >= 1) {
-      this.onStationCompleteCallback();
-    }
+    if (this.progress >= 1) this.onStationCompleteCallback();
+    if (Input.getKeyDown('b')) this.onStationCompleteCallback();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -267,6 +271,7 @@ class EnchantmentStation extends Station {
 
     // Check for winning condition
     if (this.progress >= 1) this.onStationCompleteCallback();
+    if (Input.getKeyDown('b')) this.onStationCompleteCallback();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
