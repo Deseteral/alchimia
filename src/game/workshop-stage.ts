@@ -1,3 +1,4 @@
+import { Engine } from 'src/engine/engine';
 import { Input } from 'src/engine/input';
 import { Stage } from 'src/engine/stage';
 import { Texture, Textures } from 'src/engine/textures';
@@ -99,6 +100,89 @@ class GrindingStation extends Station {
   }
 }
 
+class BurningStation extends Station {
+  barHeight = 150;
+  cursorHeight = 30;
+  cursorY = 0;
+  speed = 2;
+  gravity = 0.8;
+
+  targetY = 0;
+  nextTargetY = 0;
+
+  ticksToNextTarget = 50;
+
+  progress = 0;
+  progressSpeed = 0.004;
+  progressDrain = this.progressSpeed / 2;
+
+  onStationCompleteCallback: () => void;
+
+  constructor(onStationCompleteCallback: () => void) {
+    super();
+    this.onStationCompleteCallback = onStationCompleteCallback;
+  }
+
+  update(): void {
+    this.ticksToNextTarget -= 1;
+
+    // Move cursor
+    if (Input.getKey('a')) this.cursorY += this.speed;
+    this.cursorY -= this.gravity;
+    this.cursorY = Math.clamp(this.cursorY, 0, (this.barHeight - this.cursorHeight));
+
+    // Move target to it's next position
+    this.targetY += (this.nextTargetY - this.targetY) * 0.1;
+
+    // Check if target is within cursor's range
+    if (this.targetY >= this.cursorY && this.targetY <= (this.cursorY + this.cursorHeight)) {
+      this.progress += this.progressSpeed;
+    } else {
+      this.progress -= this.progressDrain;
+    }
+
+    this.progress = Math.clamp(this.progress, 0, 1.0);
+
+    // Determine target's next position
+    if (this.ticksToNextTarget <= 0) {
+      this.nextTargetY = (Math.random() * this.barHeight) | 0;
+      this.ticksToNextTarget = (60 + (Math.random() * (4 * 60))) | 0;
+    }
+
+    // Winning condition
+    if (this.progress >= 1) {
+      this.onStationCompleteCallback();
+    }
+  }
+
+  render(ctx: CanvasRenderingContext2D): void {
+    const x = 5;
+    const y = 5;
+    const w = 20;
+
+    // Fill background
+    ctx.fillStyle = Engine.secondaryColor;
+    ctx.fillRect(x, y, w * 3, this.barHeight);
+
+    // Frame
+    ctx.fillStyle = Engine.primaryColor;
+    ctx.drawRect(x, y, w, this.barHeight);
+
+    // Cursor
+    const drawCursorY = (y + (this.barHeight - this.cursorY - this.cursorHeight)) | 0;
+    ctx.fillRect(x, drawCursorY, w, this.cursorHeight);
+
+    // Target
+    const drawTargetY = (y + (this.barHeight - this.targetY));
+    ctx.fillRect(x + w + 1, drawTargetY, 5, 1);
+
+    // Progress bar
+    const progressPx = (this.progress * this.barHeight) | 0;
+    ctx.drawRect(x + (w * 2), y, (w / 3) | 0, this.barHeight);
+    ctx.fillRect(x + (w * 2), (y + this.barHeight - progressPx), (w / 3) | 0, progressPx);
+  }
+}
+
 class IngridientsTable extends Table {
   selectedStation = 0;
   activeStation: (Station | null) = null;
@@ -114,6 +198,8 @@ class IngridientsTable extends Table {
         this.activeStation = new CuttingStation(() => this.exitStation());
       } else if (this.selectedStation === 1) {
         this.activeStation = new GrindingStation(() => this.exitStation());
+      } else if (this.selectedStation === 2) {
+        this.activeStation = new BurningStation(() => this.exitStation());
       }
     }
 
