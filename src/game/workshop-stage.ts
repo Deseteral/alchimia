@@ -392,12 +392,13 @@ class BrewingTable extends Table {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    ctx.fillRect(0, 0, 60, 60);
+    ctx.drawImage(Textures.tableTexture.normal, 0, 0);
+    ctx.drawImage(Textures.cauldronTexture.normal, 250, 70);
   }
 }
 
 export class WorkshopStage extends Stage {
-  selectedTable = 1;
+  selectedTable = 2;
   tables = [
     new ClientTable(),
     new IngridientsTable(),
