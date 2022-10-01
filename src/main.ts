@@ -1,4 +1,5 @@
 import { Engine } from 'src/engine/engine';
+import { Input } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
 import { WorkshopStage } from 'src/game/workshop-stage';
 
@@ -15,13 +16,13 @@ function tick(): void {
   stage.update();
   stage.render(context);
 
-  Engine.update();
+  Input.update();
 
   requestAnimationFrame(tick);
 }
 
 (async function main(): Promise<void> {
-  Engine.initialize(canvas);
+  Input.initialize(canvas);
 
   canvas.width = Engine.width;
   canvas.height = Engine.height;

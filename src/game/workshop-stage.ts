@@ -76,6 +76,8 @@ class GrindingStation extends Station {
     const offsetDeg = 5;
     const targetHit = (value >= (target - offsetDeg) && value <= (target + offsetDeg));
 
+    // TODO: Check if pointer is within circle
+
     if (targetHit) {
       // Move current target to the back of array
       const firstElement = this.targets.shift()!;
