@@ -28,8 +28,8 @@ class BrewingTable extends Table {
   }
 }
 
-export class GameStage extends Stage {
-  selectedTable = 0;
+export class WorkshopStage extends Stage {
+  selectedTable = 1;
   tables = [
     new ClientTable(),
     new IngridientsTable(),

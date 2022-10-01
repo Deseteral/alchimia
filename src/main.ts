@@ -1,5 +1,5 @@
 import { Engine } from 'src/engine/engine';
-import { GameStage } from 'src/game/game-stage';
+import { WorkshopStage } from 'src/game/workshop-stage';
 
 const canvas = document.querySelector('canvas')!;
 const context = canvas.getContext('2d')!;
@@ -17,7 +17,11 @@ function tick(): void {
 }
 
 (function main(): void {
-  const initialStage = new GameStage();
+  Engine.state = { // TODO: Add save/load functionality
+    preparedIngridients: [],
+  };
+
+  const initialStage = new WorkshopStage();
   Engine.changeStage(initialStage);
 
   tick();
