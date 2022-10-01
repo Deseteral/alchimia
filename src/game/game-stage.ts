@@ -41,6 +41,7 @@ export class GameStage extends Stage {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
+    // TODO: Add sliding between tables
     this.tables[this.selectedTable].render(ctx);
   }
 }
