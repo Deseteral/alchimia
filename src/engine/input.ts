@@ -10,7 +10,7 @@ interface KeyState {
   b: boolean,
 }
 
-type Keys = keyof KeyState;
+export type Keys = keyof KeyState;
 
 export abstract class Input {
   static pointerX: number = 0;

@@ -1,5 +1,5 @@
 import { Engine } from 'src/engine/engine';
-import { Input } from 'src/engine/input';
+import { Input, Keys } from 'src/engine/input';
 import { Stage } from 'src/engine/stage';
 import { Texture, Textures } from 'src/engine/textures';
 import { Table } from 'src/game/table';
@@ -187,6 +187,113 @@ class BurningStation extends Station {
   }
 }
 
+interface Note {
+  dir: number,
+  pos: number,
+  hit: boolean,
+  counted: boolean,
+}
+
+class EnchantmentStation extends Station {
+  readonly noteSize = 16;
+  readonly hitLineX = 30 + ((this.noteSize / 2) | 0);
+
+  noteSpeed: number = 3;
+  notes: Note[] = [];
+
+  ticksToNextNote: number = 0;
+
+  progress: number = 0;
+
+  onStationCompleteCallback: () => void;
+
+  constructor(onStationCompleteCallback: () => void) {
+    super();
+    this.onStationCompleteCallback = onStationCompleteCallback;
+  }
+
+  update(): void {
+    this.ticksToNextNote -= 1;
+
+    // Move notes
+    for (let idx = 0; idx < this.notes.length; idx += 1) {
+      this.notes[idx].pos -= this.noteSpeed;
+    }
+
+    // Check if note is hit
+    ['up', 'right', 'down', 'left'].forEach((kp, ki) => {
+      if (Input.getKeyDown(kp as Keys)) {
+        let noteWasHit: boolean = false;
+
+        for (let idx = 0; idx < this.notes.length; idx += 1) {
+          const note = this.notes[idx];
+
+          if (note.dir !== ki) continue;
+
+          if (this.hitLineX >= note.pos && this.hitLineX <= (note.pos + this.noteSize)) {
+            this.notes[idx].hit = true;
+            noteWasHit = true;
+            this.progress += 0.1;
+          }
+        }
+
+        // When the key was pressed but the note was not hit
+        if (!noteWasHit) this.progress -= 0.1;
+      }
+    });
+
+    // Check for missed notes
+    for (let idx = 0; idx < this.notes.length; idx += 1) {
+      const note = this.notes[idx];
+
+      if (note.pos < (this.hitLineX - 10) && !note.hit && !note.counted) {
+        this.progress -= 0.1;
+        note.counted = true;
+      }
+    }
+
+    // Normalize progress value
+    this.progress = Math.clamp(this.progress, 0, 1);
+
+    // Add new notes
+    if (this.ticksToNextNote <= 0) {
+      this.notes.push({ dir: Math.randomRange(0, 3), pos: (Engine.width + this.noteSize), hit: false, counted: false });
+      this.ticksToNextNote = Math.randomRange(30, 2 * 60);
+    }
+  }
+
+  render(ctx: CanvasRenderingContext2D): void {
+    const x = this.hitLineX - ((this.noteSize / 2) | 0);
+    const y = 15;
+
+    // Clear background
+    const clearHeight = y + (4 * (this.noteSize + 5));
+    ctx.fillStyle = Engine.secondaryColor;
+    ctx.fillRect(0, 0, Engine.width, clearHeight);
+    ctx.fillStyle = Engine.primaryColor;
+    ctx.fillRect(0, clearHeight, Engine.width, 1);
+
+    // Note bar
+    ctx.fillRect(x, y + (0 * (this.noteSize + 5)), this.noteSize, this.noteSize);
+    ctx.fillRect(x, y + (1 * (this.noteSize + 5)), this.noteSize, this.noteSize);
+    ctx.fillRect(x, y + (2 * (this.noteSize + 5)), this.noteSize, this.noteSize);
+    ctx.fillRect(x, y + (3 * (this.noteSize + 5)), this.noteSize, this.noteSize);
+
+    // Notes
+    this.notes.forEach((note) => {
+      if (note.hit) return;
+
+      const nx = (note.pos | 0);
+      const ny = y + (note.dir * (this.noteSize + 5));
+      ctx.fillRect(nx, ny, this.noteSize, this.noteSize);
+    });
+
+    // Progress bar
+    ctx.drawRect(5, 5, 100, 5);
+    ctx.fillRect(5, 5, (100 * this.progress) | 0, 5);
+  }
+}
+
 class IngridientsTable extends Table {
   selectedStation = 0;
   activeStation: (Station | null) = null;
@@ -204,6 +311,8 @@ class IngridientsTable extends Table {
         this.activeStation = new GrindingStation(() => this.exitStation());
       } else if (this.selectedStation === 2) {
         this.activeStation = new BurningStation(() => this.exitStation());
+      } else if (this.selectedStation === 3) {
+        this.activeStation = new EnchantmentStation(() => this.exitStation());
       }
     }
 
