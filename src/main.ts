@@ -33,7 +33,7 @@ function tick(): void {
   await Textures.loadTextures();
 
   Engine.state = { // TODO: Add save/load functionality
-    preparedIngridients: [],
+    preparedIngredients: [],
   };
 
   const initialStage = new WorkshopStage();

@@ -4,7 +4,7 @@ import { drawFrame } from 'src/engine/frame';
 import { Input, Keys } from 'src/engine/input';
 import { Stage } from 'src/engine/stage';
 import { Texture, Textures } from 'src/engine/textures';
-import { IngridientAction, PreparedIngridient } from 'src/game/game-state';
+import { IngredientAction, PreparedIngredient } from 'src/game/game-state';
 import { Table } from 'src/game/table';
 
 class ClientTable extends Table {
@@ -17,7 +17,7 @@ class ClientTable extends Table {
   }
 }
 
-type StationCompleteCallback = (success: boolean, action: IngridientAction) => void
+type StationCompleteCallback = (success: boolean, action: IngredientAction) => void
 
 abstract class Station extends Stage {
   onStationCompleteCallback: StationCompleteCallback;
@@ -46,8 +46,8 @@ class CuttingStation extends Station {
     this.progress -= 0.002;
     this.progress = Math.clamp(this.progress, 0, 1);
 
-    if (this.progress >= 1) this.onStationCompleteCallback(true, IngridientAction.CUTTING);
-    if (Input.getKeyDown('b')) this.onStationCompleteCallback(false, IngridientAction.CUTTING);
+    if (this.progress >= 1) this.onStationCompleteCallback(true, IngredientAction.CUTTING);
+    if (Input.getKeyDown('b')) this.onStationCompleteCallback(false, IngredientAction.CUTTING);
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -93,8 +93,8 @@ class GrindingStation extends Station {
       this.progress += 0.03; // TODO: Randomize progress value
     }
 
-    if (this.progress >= 1) this.onStationCompleteCallback(true, IngridientAction.GRIDING);
-    if (Input.getKeyDown('b')) this.onStationCompleteCallback(false, IngridientAction.GRIDING);
+    if (this.progress >= 1) this.onStationCompleteCallback(true, IngredientAction.GRIDING);
+    if (Input.getKeyDown('b')) this.onStationCompleteCallback(false, IngredientAction.GRIDING);
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -167,8 +167,8 @@ class BurningStation extends Station {
     }
 
     // Winning condition
-    if (this.progress >= 1) this.onStationCompleteCallback(true, IngridientAction.BURNING);
-    if (Input.getKeyDown('b')) this.onStationCompleteCallback(false, IngridientAction.BURNING);
+    if (this.progress >= 1) this.onStationCompleteCallback(true, IngredientAction.BURNING);
+    if (Input.getKeyDown('b')) this.onStationCompleteCallback(false, IngredientAction.BURNING);
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -271,8 +271,8 @@ class EnchantmentStation extends Station {
     this.notes = this.notes.filter((note) => (note.pos > -this.noteSize || !note.counted));
 
     // Check for winning condition
-    if (this.progress >= 1) this.onStationCompleteCallback(true, IngridientAction.ENCHANTING);
-    if (Input.getKeyDown('b')) this.onStationCompleteCallback(false, IngridientAction.ENCHANTING);
+    if (this.progress >= 1) this.onStationCompleteCallback(true, IngredientAction.ENCHANTING);
+    if (Input.getKeyDown('b')) this.onStationCompleteCallback(false, IngredientAction.ENCHANTING);
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -325,7 +325,7 @@ class EnchantmentStation extends Station {
   }
 }
 
-class IngridientsTable extends Table {
+class IngredientsTable extends Table {
   selectedStation = 0;
   activeStation: (Station | null) = null;
 
@@ -336,9 +336,9 @@ class IngridientsTable extends Table {
     }
 
     if (Input.getKeyDown('a')) {
-      const cb: StationCompleteCallback = (success: boolean, action: IngridientAction) => {
+      const cb: StationCompleteCallback = (success: boolean, action: IngredientAction) => {
         if (success) {
-          Engine.state.preparedIngridients.push({ ingridient: 'grass', action });
+          Engine.state.preparedIngredients.push({ ingredient: 'grass', action });
         }
         this.exitStation();
       };
@@ -385,27 +385,27 @@ class IngridientsTable extends Table {
 }
 
 class BrewingTable extends Table {
-  ingridientCursor = 0;
+  ingredientCursor = 0;
   showList = false;
-  ingridiendsInside: PreparedIngridient[] = [];
+  ingridiendsInside: PreparedIngredient[] = [];
 
   update(): void {
     if (this.showList) {
-      if (Input.getKeyDown('up')) this.ingridientCursor -= 1;
-      if (Input.getKeyDown('down')) this.ingridientCursor += 1;
+      if (Input.getKeyDown('up')) this.ingredientCursor -= 1;
+      if (Input.getKeyDown('down')) this.ingredientCursor += 1;
       if (Input.getKeyDown('b')) {
-        Engine.state.preparedIngridients.push(...this.ingridiendsInside);
+        Engine.state.preparedIngredients.push(...this.ingridiendsInside);
         this.resetListState();
         this.showList = false;
       }
 
       if (Input.getKeyDown('a')) {
-        const [ing] = Engine.state.preparedIngridients.splice(this.ingridientCursor, 1);
+        const [ing] = Engine.state.preparedIngredients.splice(this.ingredientCursor, 1);
         this.ingridiendsInside.push(ing);
-        this.ingridientCursor -= 1;
+        this.ingredientCursor -= 1;
       }
 
-      this.ingridientCursor = Math.clamp(this.ingridientCursor, 0, Engine.state.preparedIngridients.length - 1);
+      this.ingredientCursor = Math.clamp(this.ingredientCursor, 0, Engine.state.preparedIngredients.length - 1);
     } else {
       if (Input.getKeyDown('left')) this.onPreviousTableCb();
       if (Input.getKeyDown('a')) {
@@ -421,15 +421,15 @@ class BrewingTable extends Table {
 
     if (this.showList) {
       drawFrame(11, 11, 100, 218, ctx, () => {
-        Engine.state.preparedIngridients.forEach((pi, idx) => {
-          Font.draw(`${idx === this.ingridientCursor ? '>' : ' '}${pi.ingridient}`, 11, 4 + idx * (Font.glyphSizeV / 2), ctx);
+        Engine.state.preparedIngredients.forEach((pi, idx) => {
+          Font.draw(`${idx === this.ingredientCursor ? '>' : ' '}${pi.ingredient}`, 11, 4 + idx * (Font.glyphSizeV / 2), ctx);
         });
       });
     }
   }
 
   private resetListState(): void {
-    this.ingridientCursor = 0;
+    this.ingredientCursor = 0;
     this.ingridiendsInside = [];
   }
 }
@@ -438,7 +438,7 @@ export class WorkshopStage extends Stage {
   selectedTable = 2;
   tables = [
     new ClientTable(() => this.nextTable(), () => this.prevTable()),
-    new IngridientsTable(() => this.nextTable(), () => this.prevTable()),
+    new IngredientsTable(() => this.nextTable(), () => this.prevTable()),
     new BrewingTable(() => this.nextTable(), () => this.prevTable()),
   ];
 

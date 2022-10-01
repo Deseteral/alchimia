@@ -1,17 +1,17 @@
 export interface GameState {
-  preparedIngridients: PreparedIngridient[],
+  preparedIngredients: PreparedIngredient[],
 }
 
-export type Ingridient = string;
+export type Ingredient = string;
 
-export enum IngridientAction {
+export enum IngredientAction {
   CUTTING,
   GRIDING,
   BURNING,
   ENCHANTING,
 }
 
-export interface PreparedIngridient {
-  ingridient: Ingridient
-  action: IngridientAction,
+export interface PreparedIngredient {
+  ingredient: Ingredient
+  action: IngredientAction,
 }
