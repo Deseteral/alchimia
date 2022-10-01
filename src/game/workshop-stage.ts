@@ -396,7 +396,8 @@ class BrewingTable extends Table {
     ctx.drawImage(Textures.tableTexture.normal, 0, 0);
     ctx.drawImage(Textures.cauldronTexture.normal, 250, 70);
 
-    drawFrame(10, 10, 100, 30, ctx);
+    drawFrame(11, 11, 100, 30, ctx);
+    ctx.fillRect(11, 11, 100, 30);
   }
 }
 
@@ -415,5 +416,7 @@ export class WorkshopStage extends Stage {
   render(ctx: CanvasRenderingContext2D): void {
     // TODO: Add sliding between tables
     this.tables[this.selectedTable].render(ctx);
+
+    ctx.drawRect(0, 0, Engine.width, Engine.height);
   }
 }
