@@ -5,9 +5,18 @@ CanvasRenderingContext2D.prototype.drawRect = function drawRect(x: number, y: nu
   this.fillRect(x + w - 1, y, 1, h);
 };
 
+// eslint-disable-next-line no-extend-native
+Math.clamp = function clamp(num: number, min: number, max: number): number {
+  return Math.min(Math.max(num, min), max);
+};
+
 declare global {
   interface CanvasRenderingContext2D {
     drawRect(x: number, y: number, w: number, h: number): void;
+  }
+
+  interface Math {
+    clamp(num: number, min: number, max: number): number;
   }
 }
 

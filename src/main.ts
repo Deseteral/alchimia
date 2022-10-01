@@ -15,10 +15,14 @@ function tick(): void {
   stage.update();
   stage.render(context);
 
+  Engine.update();
+
   requestAnimationFrame(tick);
 }
 
 (async function main(): Promise<void> {
+  Engine.initialize();
+
   canvas.width = Engine.width;
   canvas.height = Engine.height;
   context.imageSmoothingEnabled = false;
