@@ -46,6 +46,8 @@ import stoneUrl from 'url:../../assets/stone.png';
 import xUrl from 'url:../../assets/x.png';
 // @ts-ignore
 import bookUrl from 'url:../../assets/book.png';
+// @ts-ignore
+import listPointerRightUrl from 'url:../../assets/list_pointer_right.png';
 
 export interface Texture {
   normal: HTMLCanvasElement,
@@ -76,6 +78,7 @@ export abstract class Textures {
   static stoneTexture: Texture;
   static xTexture: Texture;
   static bookTexture: Texture;
+  static listPointerRightTexture: Texture;
 
   static async loadTextures(): Promise<void> {
     Textures.burningTexture = await Textures.load(burningUrl);
@@ -101,6 +104,7 @@ export abstract class Textures {
     Textures.stoneTexture = await Textures.load(stoneUrl);
     Textures.xTexture = await Textures.load(xUrl);
     Textures.bookTexture = await Textures.load(bookUrl);
+    Textures.listPointerRightTexture = await Textures.load(listPointerRightUrl);
   }
 
   private static async load(url: string): Promise<Texture> {

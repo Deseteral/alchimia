@@ -8,14 +8,15 @@ import { BurningStation } from 'src/game/stations/burning-station';
 import { CuttingStation } from 'src/game/stations/cutting-station';
 import { EnchantmentStation } from 'src/game/stations/enchantment-station';
 import { GrindingStation } from 'src/game/stations/grinding-station';
-import { Ingredient, IngredientAction, PreparedIngredient } from 'src/game/ingredients';
-import { drawRecipe, RECIPES } from 'src/game/recipes';
+import { Ingredient, IngredientAction, ingredientDisplayName, Ingredients, PreparedIngredient } from 'src/game/ingredients';
+import { drawPreparedIngredientRow, drawRecipe, getIngredientIcon, RECIPES } from 'src/game/recipes';
 import { Station, StationCompleteCallback } from 'src/game/stations/station';
 import { Table } from 'src/game/table';
 
 class ClientTable extends Table {
   update(): void {
     if (Input.getKeyDown('right')) this.onNextTableCb();
+    if (Input.getKeyDown('down')) this.openBook();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -24,8 +25,11 @@ class ClientTable extends Table {
 }
 
 class IngredientsTable extends Table {
-  selectedStation = 0;
+  selectedStation: number = 0;
   activeStation: (Station | null) = null;
+
+  isIndredientPickerOpen: boolean = false;
+  ingredientCursor: number = 0;
 
   update(): void {
     if (this.activeStation) {
@@ -33,30 +37,56 @@ class IngredientsTable extends Table {
       return;
     }
 
-    if (Input.getKeyDown('a')) {
-      const cb: StationCompleteCallback = (success: boolean, action: IngredientAction) => {
-        if (success) {
-          Engine.state.preparedIngredients.push({ ingredient: Ingredient.HERB, action });
-        }
-        this.exitStation();
-      };
+    if (!this.isIndredientPickerOpen && Input.getKeyDown('a')) {
+      this.isIndredientPickerOpen = true;
+      return;
+    }
 
-      if (this.selectedStation === 0) {
-        this.activeStation = new CuttingStation(cb);
-      } else if (this.selectedStation === 1) {
-        this.activeStation = new GrindingStation(cb);
-      } else if (this.selectedStation === 2) {
-        this.activeStation = new BurningStation(cb);
-      } else if (this.selectedStation === 3) {
-        this.activeStation = new EnchantmentStation(cb);
+    if (this.isIndredientPickerOpen) {
+      if (Input.getKeyDown('up')) this.ingredientCursor -= 1;
+      if (Input.getKeyDown('down')) this.ingredientCursor += 1;
+      if (Input.getKeyDown('b')) {
+        this.isIndredientPickerOpen = false;
+        return;
       }
+      this.ingredientCursor = Math.clamp(this.ingredientCursor, 0, 5 - 1);
+
+      if (Input.getKeyDown('a')) {
+        const selectedIngredient: Ingredient = Ingredients[this.ingredientCursor];
+        this.ingredientCursor = 0;
+        this.isIndredientPickerOpen = false;
+
+        const cb: StationCompleteCallback = (success: boolean, action: IngredientAction) => {
+          if (success) {
+            Engine.state.preparedIngredients.push({ ingredient: selectedIngredient, action });
+          }
+          this.exitStation();
+        };
+
+        if (this.selectedStation === 0) {
+          this.activeStation = new CuttingStation(cb);
+        } else if (this.selectedStation === 1) {
+          this.activeStation = new GrindingStation(cb);
+        } else if (this.selectedStation === 2) {
+          this.activeStation = new BurningStation(cb);
+        } else if (this.selectedStation === 3) {
+          this.activeStation = new EnchantmentStation(cb);
+        }
+      }
+
+      return;
     }
 
     if (Input.getKeyDown('right')) this.selectedStation += 1;
     if (Input.getKeyDown('left')) this.selectedStation -= 1;
 
-    if (this.selectedStation < 0) this.onPreviousTableCb();
-    if (this.selectedStation > 3) this.onNextTableCb();
+    if (this.selectedStation < 0) {
+      this.onPreviousTableCb();
+    } else if (this.selectedStation > 3) {
+      this.onNextTableCb();
+    } else if (Input.getKeyDown('down')) {
+      this.openBook();
+    }
 
     this.selectedStation = Math.clamp(this.selectedStation, 0, 3);
   }
@@ -68,6 +98,18 @@ class IngredientsTable extends Table {
     this.drawStation(Textures.grindingTexture, 120, 110, this.selectedStation === 1, ctx);
     this.drawStation(Textures.burningTexture, 185, 110, this.selectedStation === 2, ctx);
     this.drawStation(Textures.enchantingTexture, 260, 110, this.selectedStation === 3, ctx);
+
+    if (this.isIndredientPickerOpen) {
+      drawFrame(11, 11, 120, 97, ctx, () => {
+        Ingredients.forEach((ing, idx) => {
+          const xx: number = 11;
+          const yy: number = 6 + idx * (Font.glyphSizeV / 2);
+          if (idx === this.ingredientCursor) ctx.drawImage(Textures.listPointerRightTexture.normal, xx, yy + 5);
+          ctx.drawImage(getIngredientIcon(ing), xx + 16, yy + 5);
+          Font.draw(`${ingredientDisplayName(ing)}`, xx + 16 + 16 + 2, yy, ctx);
+        });
+      });
+    }
 
     if (this.activeStation) this.activeStation.render(ctx);
   }
@@ -113,10 +155,13 @@ class BrewingTable extends Table {
     } else {
       this.ticksUntilNextBubble -= 1;
 
-      if (Input.getKeyDown('left')) this.onPreviousTableCb();
-      if (Input.getKeyDown('a')) {
+      if (Input.getKeyDown('left')) {
+        this.onPreviousTableCb();
+      } else if (Input.getKeyDown('a')) {
         this.resetListState();
         this.showList = true;
+      } else if (Input.getKeyDown('down')) {
+        this.openBook();
       }
 
       if (this.ticksUntilNextBubble <= 0 && this.ticksUntilBrewingDone > 0) {
@@ -146,7 +191,9 @@ class BrewingTable extends Table {
     if (this.showList) {
       drawFrame(11, 11, 100, 218, ctx, () => {
         Engine.state.preparedIngredients.forEach((pi, idx) => {
-          Font.draw(`${idx === this.ingredientCursor ? '>' : ' '}${pi.ingredient}`, 11, 4 + idx * (Font.glyphSizeV / 2), ctx);
+          const yy = 10 + idx * (16 + 4);
+          if (idx === this.ingredientCursor) ctx.drawImage(Textures.listPointerRightTexture.normal, 11, yy);
+          drawPreparedIngredientRow(pi, 11 + 16 + 4, yy, ctx);
         });
       });
     }
@@ -166,9 +213,9 @@ class BrewingTable extends Table {
 export class WorkshopStage extends Stage {
   selectedTable = 0;
   tables = [
-    new ClientTable(() => this.nextTable(), () => this.prevTable()),
-    new IngredientsTable(() => this.nextTable(), () => this.prevTable()),
-    new BrewingTable(() => this.nextTable(), () => this.prevTable()),
+    new ClientTable(() => this.nextTable(), () => this.prevTable(), () => this.openBook()),
+    new IngredientsTable(() => this.nextTable(), () => this.prevTable(), () => this.openBook()),
+    new BrewingTable(() => this.nextTable(), () => this.prevTable(), () => this.openBook()),
   ];
 
   isInBookView: boolean = false;
@@ -179,8 +226,6 @@ export class WorkshopStage extends Stage {
       this.updateBook();
       return;
     }
-
-    if (Input.getKeyDown('down')) this.isInBookView = true;
 
     this.tables[this.selectedTable].update();
   }
@@ -224,5 +269,9 @@ export class WorkshopStage extends Stage {
 
     Font.draw(`${this.pageNumber * 2 + 1}`, 50, 200, ctx);
     Font.draw(`${this.pageNumber * 2 + 2}`, 350, 200, ctx);
+  }
+
+  private openBook(): void {
+    this.isInBookView = true;
   }
 }

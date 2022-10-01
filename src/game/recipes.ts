@@ -47,7 +47,7 @@ export const RECIPES: Recipe[] = [
   },
 ];
 
-function getIngredientIcon(ingredient: Ingredient): HTMLCanvasElement {
+export function getIngredientIcon(ingredient: Ingredient): HTMLCanvasElement {
   switch (ingredient) {
     case Ingredient.HERB: return Textures.herbTexture.normal;
     case Ingredient.MUSHROOM: return Textures.mushroomTexture.normal;
@@ -58,7 +58,7 @@ function getIngredientIcon(ingredient: Ingredient): HTMLCanvasElement {
   }
 }
 
-function getIngredientActionIcon(action: IngredientAction): HTMLCanvasElement {
+export function getIngredientActionIcon(action: IngredientAction): HTMLCanvasElement {
   switch (action) {
     case IngredientAction.CUTTING: return Textures.knifeTexture.normal;
     case IngredientAction.GRIDING: return Textures.mortarTexture.normal;
@@ -68,14 +68,18 @@ function getIngredientActionIcon(action: IngredientAction): HTMLCanvasElement {
   }
 }
 
+export function drawPreparedIngredientRow(pi: PreparedIngredient, x: number, y: number, ctx: CanvasRenderingContext2D): void {
+  ctx.drawImage(getIngredientIcon(pi.ingredient), x, y);
+  ctx.drawImage(Textures.xTexture.normal, x + 16, y);
+  ctx.drawImage(getIngredientActionIcon(pi.action), x + 16 * 2, y);
+}
+
 export function drawRecipe(recipe: Recipe, x: number, y: number, ctx: CanvasRenderingContext2D): void {
   Font.draw(recipe.name, x, y, ctx);
 
   recipe.ingredients.forEach((ing, idx) => {
     const xx: number = x + 5;
     const yy: number = y + 40 + (16 + 5) * idx;
-    ctx.drawImage(getIngredientIcon(ing.ingredient), xx, yy);
-    ctx.drawImage(Textures.xTexture.normal, xx + 16, yy);
-    ctx.drawImage(getIngredientActionIcon(ing.action), xx + 16 * 2, yy);
+    drawPreparedIngredientRow(ing, xx, yy, ctx);
   });
 }
