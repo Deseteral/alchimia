@@ -14,5 +14,4 @@ export enum IngridientAction {
 export interface PreparedIngridient {
   ingridient: Ingridient
   action: IngridientAction,
-  amount: number,
 }

@@ -1,6 +1,6 @@
 import { Textures } from 'src/engine/textures';
 
-export function drawFrame(x: number, y: number, w: number, h: number, ctx: CanvasRenderingContext2D): void {
+export function drawFrame(x: number, y: number, w: number, h: number, ctx: CanvasRenderingContext2D, clippingRegion: () => void): void {
   const patchSize = 9;
 
   // top-left corner
@@ -119,4 +119,12 @@ export function drawFrame(x: number, y: number, w: number, h: number, ctx: Canva
     w,
     h,
   );
+
+  // Clipping content inside
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+  clippingRegion();
+  ctx.restore();
 }

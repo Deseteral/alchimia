@@ -1,9 +1,10 @@
 import { Engine } from 'src/engine/engine';
+import { Font } from 'src/engine/font';
 import { drawFrame } from 'src/engine/frame';
 import { Input, Keys } from 'src/engine/input';
 import { Stage } from 'src/engine/stage';
 import { Texture, Textures } from 'src/engine/textures';
-import { IngridientAction } from 'src/game/game-state';
+import { IngridientAction, PreparedIngridient } from 'src/game/game-state';
 import { Table } from 'src/game/table';
 
 class ClientTable extends Table {
@@ -337,7 +338,7 @@ class IngridientsTable extends Table {
     if (Input.getKeyDown('a')) {
       const cb: StationCompleteCallback = (success: boolean, action: IngridientAction) => {
         if (success) {
-          Engine.state.preparedIngridients.push({ ingridient: 'grass', action, amount: 1 });
+          Engine.state.preparedIngridients.push({ ingridient: 'grass', action });
         }
         this.exitStation();
       };
@@ -384,20 +385,52 @@ class IngridientsTable extends Table {
 }
 
 class BrewingTable extends Table {
+  ingridientCursor = 0;
+  showList = false;
+  ingridiendsInside: PreparedIngridient[] = [];
+
   update(): void {
-    if (Input.getKeyDown('left')) this.onPreviousTableCb();
+    if (this.showList) {
+      if (Input.getKeyDown('up')) this.ingridientCursor -= 1;
+      if (Input.getKeyDown('down')) this.ingridientCursor += 1;
+      if (Input.getKeyDown('b')) {
+        Engine.state.preparedIngridients.push(...this.ingridiendsInside);
+        this.resetListState();
+        this.showList = false;
+      }
+
+      if (Input.getKeyDown('a')) {
+        const [ing] = Engine.state.preparedIngridients.splice(this.ingridientCursor, 1);
+        this.ingridiendsInside.push(ing);
+        this.ingridientCursor -= 1;
+      }
+
+      this.ingridientCursor = Math.clamp(this.ingridientCursor, 0, Engine.state.preparedIngridients.length - 1);
+    } else {
+      if (Input.getKeyDown('left')) this.onPreviousTableCb();
+      if (Input.getKeyDown('a')) {
+        this.resetListState();
+        this.showList = true;
+      }
+    }
   }
 
   render(ctx: CanvasRenderingContext2D): void {
     ctx.drawImage(Textures.tableTexture.normal, 0, 0);
     ctx.drawImage(Textures.cauldronTexture.normal, 250, 70);
 
-    drawFrame(11, 11, 100, 30, ctx);
+    if (this.showList) {
+      drawFrame(11, 11, 100, 218, ctx, () => {
+        Engine.state.preparedIngridients.forEach((pi, idx) => {
+          Font.draw(`${idx === this.ingridientCursor ? '>' : ' '}${pi.ingridient}`, 11, 4 + idx * (Font.glyphSizeV / 2), ctx);
+        });
+      });
+    }
+  }
 
-    ctx.font = '13px IM Fell DW Pica';
-    Engine.state.preparedIngridients.forEach((pi, idx) => {
-      ctx.fillText(`${pi.ingridient}`, 11, 11 * 2 + 11 * idx * 24);
-    });
+  private resetListState(): void {
+    this.ingridientCursor = 0;
+    this.ingridiendsInside = [];
   }
 }
 
