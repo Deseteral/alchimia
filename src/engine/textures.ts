@@ -26,6 +26,26 @@ import frameUrl from 'url:../../assets/frame.png';
 import bubbleSmallUrl from 'url:../../assets/bubble_small.png';
 // @ts-ignore
 import bubbleLargeUrl from 'url:../../assets/bubble_large.png';
+// @ts-ignore
+import fireUrl from 'url:../../assets/fire.png';
+// @ts-ignore
+import flowerUrl from 'url:../../assets/flower.png';
+// @ts-ignore
+import herbUrl from 'url:../../assets/herb.png';
+// @ts-ignore
+import knifeUrl from 'url:../../assets/knife.png';
+// @ts-ignore
+import mortarUrl from 'url:../../assets/mortar.png';
+// @ts-ignore
+import mushroomUrl from 'url:../../assets/mushroom.png';
+// @ts-ignore
+import spellUrl from 'url:../../assets/spell.png';
+// @ts-ignore
+import stoneUrl from 'url:../../assets/stone.png';
+// @ts-ignore
+import xUrl from 'url:../../assets/x.png';
+// @ts-ignore
+import bookUrl from 'url:../../assets/book.png';
 
 export interface Texture {
   normal: HTMLCanvasElement,
@@ -46,6 +66,16 @@ export abstract class Textures {
   static frameTexture: Texture;
   static bubbleSmallTexture: Texture;
   static bubbleLargeTexture: Texture;
+  static fireTexture: Texture;
+  static flowerTexture: Texture;
+  static herbTexture: Texture;
+  static knifeTexture: Texture;
+  static mortarTexture: Texture;
+  static mushroomTexture: Texture;
+  static spellTexture: Texture;
+  static stoneTexture: Texture;
+  static xTexture: Texture;
+  static bookTexture: Texture;
 
   static async loadTextures(): Promise<void> {
     Textures.burningTexture = await Textures.load(burningUrl);
@@ -61,6 +91,16 @@ export abstract class Textures {
     Textures.frameTexture = await Textures.load(frameUrl);
     Textures.bubbleSmallTexture = await Textures.load(bubbleSmallUrl);
     Textures.bubbleLargeTexture = await Textures.load(bubbleLargeUrl);
+    Textures.fireTexture = await Textures.load(fireUrl);
+    Textures.flowerTexture = await Textures.load(flowerUrl);
+    Textures.herbTexture = await Textures.load(herbUrl);
+    Textures.knifeTexture = await Textures.load(knifeUrl);
+    Textures.mortarTexture = await Textures.load(mortarUrl);
+    Textures.mushroomTexture = await Textures.load(mushroomUrl);
+    Textures.spellTexture = await Textures.load(spellUrl);
+    Textures.stoneTexture = await Textures.load(stoneUrl);
+    Textures.xTexture = await Textures.load(xUrl);
+    Textures.bookTexture = await Textures.load(bookUrl);
   }
 
   private static async load(url: string): Promise<Texture> {
