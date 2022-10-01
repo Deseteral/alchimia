@@ -1,4 +1,6 @@
+import { Engine } from 'src/engine/engine';
 import { Stage } from 'src/engine/stage';
+import { Textures } from 'src/engine/textures';
 import { Table } from 'src/game/table';
 
 class ClientTable extends Table {
@@ -15,7 +17,7 @@ class IngridientsTable extends Table {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    ctx.fillRect(0, 0, 40, 40);
+    ctx.drawImage(Textures.tableTexture, 0, 0);
   }
 }
 

@@ -1,4 +1,5 @@
 import { Engine } from 'src/engine/engine';
+import { Textures } from 'src/engine/textures';
 import { WorkshopStage } from 'src/game/workshop-stage';
 
 const canvas = document.querySelector('canvas')!;
@@ -16,7 +17,12 @@ function tick(): void {
   requestAnimationFrame(tick);
 }
 
-(function main(): void {
+(async function main(): Promise<void> {
+  canvas.width = Engine.width;
+  canvas.height = Engine.height;
+
+  await Textures.loadTextures();
+
   Engine.state = { // TODO: Add save/load functionality
     preparedIngridients: [],
   };
