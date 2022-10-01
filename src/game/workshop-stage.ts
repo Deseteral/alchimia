@@ -3,10 +3,12 @@ import { drawFrame } from 'src/engine/frame';
 import { Input, Keys } from 'src/engine/input';
 import { Stage } from 'src/engine/stage';
 import { Texture, Textures } from 'src/engine/textures';
+import { IngridientAction } from 'src/game/game-state';
 import { Table } from 'src/game/table';
 
 class ClientTable extends Table {
   update(): void {
+    if (Input.getKeyDown('right')) this.onNextTableCb();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -14,17 +16,20 @@ class ClientTable extends Table {
   }
 }
 
-abstract class Station extends Stage {}
+type StationCompleteCallback = (success: boolean, action: IngridientAction) => void
+
+abstract class Station extends Stage {
+  onStationCompleteCallback: StationCompleteCallback;
+
+  constructor(cb: StationCompleteCallback) {
+    super();
+    this.onStationCompleteCallback = cb;
+  }
+}
 
 class CuttingStation extends Station {
   progress: number = 0;
   left: boolean = true;
-  onStationCompleteCallback: () => void;
-
-  constructor(onStationCompleteCallback: () => void) {
-    super();
-    this.onStationCompleteCallback = onStationCompleteCallback;
-  }
 
   update(): void {
     if (Input.getKeyDown('left') && this.left) {
@@ -40,8 +45,8 @@ class CuttingStation extends Station {
     this.progress -= 0.002;
     this.progress = Math.clamp(this.progress, 0, 1);
 
-    if (this.progress >= 1) this.onStationCompleteCallback();
-    if (Input.getKeyDown('b')) this.onStationCompleteCallback();
+    if (this.progress >= 1) this.onStationCompleteCallback(true, IngridientAction.CUTTING);
+    if (Input.getKeyDown('b')) this.onStationCompleteCallback(false, IngridientAction.CUTTING);
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -67,13 +72,6 @@ class GrindingStation extends Station {
 
   progressDrawRadius = 0;
 
-  onStationCompleteCallback: () => void;
-
-  constructor(onStationCompleteCallback: () => void) {
-    super();
-    this.onStationCompleteCallback = onStationCompleteCallback;
-  }
-
   update(): void {
     const x = Input.pointerX - this.positionX;
     const y = -(Input.pointerY - this.positionY);
@@ -94,8 +92,8 @@ class GrindingStation extends Station {
       this.progress += 0.03; // TODO: Randomize progress value
     }
 
-    if (this.progress >= 1) this.onStationCompleteCallback();
-    if (Input.getKeyDown('b')) this.onStationCompleteCallback();
+    if (this.progress >= 1) this.onStationCompleteCallback(true, IngridientAction.GRIDING);
+    if (Input.getKeyDown('b')) this.onStationCompleteCallback(false, IngridientAction.GRIDING);
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -131,13 +129,6 @@ class BurningStation extends Station {
   ticksToNextTarget = 50;
 
   progress = 0;
-
-  onStationCompleteCallback: () => void;
-
-  constructor(onStationCompleteCallback: () => void) {
-    super();
-    this.onStationCompleteCallback = onStationCompleteCallback;
-  }
 
   randomNextTargetY(): number {
     return Math.randomRange(0, this.barHeight) | 0;
@@ -175,8 +166,8 @@ class BurningStation extends Station {
     }
 
     // Winning condition
-    if (this.progress >= 1) this.onStationCompleteCallback();
-    if (Input.getKeyDown('b')) this.onStationCompleteCallback();
+    if (this.progress >= 1) this.onStationCompleteCallback(true, IngridientAction.BURNING);
+    if (Input.getKeyDown('b')) this.onStationCompleteCallback(false, IngridientAction.BURNING);
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -224,13 +215,6 @@ class EnchantmentStation extends Station {
   ticksToNextNote: number = 0;
 
   progress: number = 0;
-
-  onStationCompleteCallback: () => void;
-
-  constructor(onStationCompleteCallback: () => void) {
-    super();
-    this.onStationCompleteCallback = onStationCompleteCallback;
-  }
 
   update(): void {
     this.ticksToNextNote -= 1;
@@ -286,8 +270,8 @@ class EnchantmentStation extends Station {
     this.notes = this.notes.filter((note) => (note.pos > -this.noteSize || !note.counted));
 
     // Check for winning condition
-    if (this.progress >= 1) this.onStationCompleteCallback();
-    if (Input.getKeyDown('b')) this.onStationCompleteCallback();
+    if (this.progress >= 1) this.onStationCompleteCallback(true, IngridientAction.ENCHANTING);
+    if (Input.getKeyDown('b')) this.onStationCompleteCallback(false, IngridientAction.ENCHANTING);
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -351,19 +335,30 @@ class IngridientsTable extends Table {
     }
 
     if (Input.getKeyDown('a')) {
+      const cb: StationCompleteCallback = (success: boolean, action: IngridientAction) => {
+        if (success) {
+          Engine.state.preparedIngridients.push({ ingridient: 'grass', action, amount: 1 });
+        }
+        this.exitStation();
+      };
+
       if (this.selectedStation === 0) {
-        this.activeStation = new CuttingStation(() => this.exitStation());
+        this.activeStation = new CuttingStation(cb);
       } else if (this.selectedStation === 1) {
-        this.activeStation = new GrindingStation(() => this.exitStation());
+        this.activeStation = new GrindingStation(cb);
       } else if (this.selectedStation === 2) {
-        this.activeStation = new BurningStation(() => this.exitStation());
+        this.activeStation = new BurningStation(cb);
       } else if (this.selectedStation === 3) {
-        this.activeStation = new EnchantmentStation(() => this.exitStation());
+        this.activeStation = new EnchantmentStation(cb);
       }
     }
 
     if (Input.getKeyDown('right')) this.selectedStation += 1;
     if (Input.getKeyDown('left')) this.selectedStation -= 1;
+
+    if (this.selectedStation < 0) this.onPreviousTableCb();
+    if (this.selectedStation > 3) this.onNextTableCb();
+
     this.selectedStation = Math.clamp(this.selectedStation, 0, 3);
   }
 
@@ -390,6 +385,7 @@ class IngridientsTable extends Table {
 
 class BrewingTable extends Table {
   update(): void {
+    if (Input.getKeyDown('left')) this.onPreviousTableCb();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -397,20 +393,24 @@ class BrewingTable extends Table {
     ctx.drawImage(Textures.cauldronTexture.normal, 250, 70);
 
     drawFrame(11, 11, 100, 30, ctx);
-    ctx.fillRect(11, 11, 100, 30);
+
+    ctx.font = '13px IM Fell DW Pica';
+    Engine.state.preparedIngridients.forEach((pi, idx) => {
+      ctx.fillText(`${pi.ingridient}`, 11, 11 * 2 + 11 * idx * 24);
+    });
   }
 }
 
 export class WorkshopStage extends Stage {
   selectedTable = 2;
   tables = [
-    new ClientTable(),
-    new IngridientsTable(),
-    new BrewingTable(),
+    new ClientTable(() => this.nextTable(), () => this.prevTable()),
+    new IngridientsTable(() => this.nextTable(), () => this.prevTable()),
+    new BrewingTable(() => this.nextTable(), () => this.prevTable()),
   ];
 
   update(): void {
-    this.tables.forEach((table) => table.update());
+    this.tables[this.selectedTable].update();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -418,5 +418,15 @@ export class WorkshopStage extends Stage {
     this.tables[this.selectedTable].render(ctx);
 
     ctx.drawRect(0, 0, Engine.width, Engine.height);
+  }
+
+  nextTable(): void {
+    this.selectedTable += 1;
+    this.selectedTable = Math.clamp(this.selectedTable, 0, 2);
+  }
+
+  prevTable(): void {
+    this.selectedTable -= 1;
+    this.selectedTable = Math.clamp(this.selectedTable, 0, 2);
   }
 }

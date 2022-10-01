@@ -1,6 +1,7 @@
 import { Engine } from 'src/engine/engine';
 import { Input } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
+import { IngridientAction } from 'src/game/game-state';
 import { WorkshopStage } from 'src/game/workshop-stage';
 
 const canvas = document.querySelector('canvas')!;
@@ -31,7 +32,7 @@ function tick(): void {
   await Textures.loadTextures();
 
   Engine.state = { // TODO: Add save/load functionality
-    preparedIngridients: [],
+    preparedIngridients: [{ ingridient: 'grass', action: IngridientAction.CUTTING, amount: 1 }],
   };
 
   const initialStage = new WorkshopStage();
