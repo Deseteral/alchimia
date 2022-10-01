@@ -8,7 +8,8 @@
     "build": "parcel build src/index.html",
     "test": "npm run test:type-check",
     "test:type-check": "tsc --noEmit",
-    "test:type-check:watch": "tsc --noEmit -w"
+    "test:type-check:watch": "tsc --noEmit -w",
+    "clean": "rm -rf ./.parcel-cache ./dist"
   },
   "author": "",
   "license": "MIT",

@@ -1,6 +1,5 @@
-import { Engine } from 'src/engine/engine';
 import { Stage } from 'src/engine/stage';
-import { Textures } from 'src/engine/textures';
+import { Texture, Textures } from 'src/engine/textures';
 import { Table } from 'src/game/table';
 
 class ClientTable extends Table {
@@ -13,11 +12,25 @@ class ClientTable extends Table {
 }
 
 class IngridientsTable extends Table {
+  selectedStation = 0;
+
   update(): void {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
+    // ctx.fillRect(0, 0, 50, 50);
+
     ctx.drawImage(Textures.tableTexture, 0, 0);
+
+    this.drawStation(Textures.cuttingTexture, 50, 110, this.selectedStation === 0, ctx);
+    this.drawStation(Textures.grindingTexture, 120, 110, this.selectedStation === 1, ctx);
+    this.drawStation(Textures.burningTexture, 185, 110, this.selectedStation === 2, ctx);
+    this.drawStation(Textures.enchantingTexture, 260, 110, this.selectedStation === 3, ctx);
+  }
+
+  private drawStation(texture: Texture, x: number, y: number, isSelected: boolean, ctx: CanvasRenderingContext2D): void {
+    if (isSelected) ctx.drawRect(x, y, texture.width, texture.height);
+    ctx.drawImage(texture, x, y);
   }
 }
 

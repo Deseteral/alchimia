@@ -1,3 +1,4 @@
+import 'src/engine/utils';
 import { Stage } from 'src/engine/stage';
 import { GameState } from 'src/game/game-state';
 

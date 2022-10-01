@@ -2,13 +2,29 @@ import { Engine } from 'src/engine/engine';
 
 // @ts-ignore
 import tableUrl from 'url:../../assets/table.png';
+// @ts-ignore
+import burningUrl from 'url:../../assets/burning.png';
+// @ts-ignore
+import cuttingUrl from 'url:../../assets/cutting.png';
+// @ts-ignore
+import enchantingUrl from 'url:../../assets/enchanting.png';
+// @ts-ignore
+import grindingUrl from 'url:../../assets/grinding.png';
 
 export type Texture = HTMLCanvasElement;
 
 export abstract class Textures {
+  static burningTexture: Texture;
+  static cuttingTexture: Texture;
+  static enchantingTexture: Texture;
+  static grindingTexture: Texture;
   static tableTexture: Texture;
 
   static async loadTextures(): Promise<void> {
+    Textures.burningTexture = await Textures.load(burningUrl);
+    Textures.cuttingTexture = await Textures.load(cuttingUrl);
+    Textures.enchantingTexture = await Textures.load(enchantingUrl);
+    Textures.grindingTexture = await Textures.load(grindingUrl);
     Textures.tableTexture = await Textures.load(tableUrl);
   }
 

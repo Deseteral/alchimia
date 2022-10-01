@@ -9,6 +9,7 @@ function tick(): void {
   context.fillStyle = Engine.secondaryColor;
   context.fillRect(0, 0, Engine.width, Engine.height);
   context.fillStyle = Engine.primaryColor;
+  context.strokeStyle = Engine.primaryColor;
 
   const stage = Engine.activeStage!;
   stage.update();
@@ -20,6 +21,7 @@ function tick(): void {
 (async function main(): Promise<void> {
   canvas.width = Engine.width;
   canvas.height = Engine.height;
+  context.imageSmoothingEnabled = false;
 
   await Textures.loadTextures();
 
