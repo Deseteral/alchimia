@@ -52,6 +52,7 @@ function tick(): void {
     recipes: generateRecipes(),
     orders: [],
     gold: 0,
+    completedOrders: 0,
   };
 
   const initialStage = new WorkshopStage();

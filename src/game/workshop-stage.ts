@@ -15,7 +15,18 @@ import { Table } from 'src/game/table';
 import { findMatchingRecipe } from 'src/game/recipe-logic';
 
 class ClientTable extends Table {
+  nextClientAtTicks: number = 10 * 60;
+
   update(): void {
+    if (Engine.ticks >= this.nextClientAtTicks) {
+      const recipeRange: number = (Engine.state.completedOrders < 5) ? 5 : (Engine.state.recipes.length - 1);
+      const recipeIdx: number = Math.randomRange(0, recipeRange);
+      const recipe = Engine.state.recipes[recipeIdx];
+      Engine.state.orders.push(recipe);
+
+      this.nextClientAtTicks = Engine.ticks + (60 * 10); // I assume the game is running at 60 fps so we can use that to measure time, it's stupid but will be easier to implement pause.
+    }
+
     if (Input.getKeyDown('right')) this.onNextTableCb();
     if (Input.getKeyDown('down')) this.openBook();
   }
@@ -34,9 +45,17 @@ class ClientTable extends Table {
 
     drawFrame(11 + 118, 11, 260, 16, ctx, () => {
       // Time counter
+      const secondsUnitlNextClient: number = 10 - Math.round((this.nextClientAtTicks - Engine.ticks) / 60);
+
       for (let tidx = 0; tidx < 10; tidx += 1) {
         const size = 5;
-        ctx.fillRect(11 + 118 + 10 + (tidx * (size + 2)), 17, size, size);
+        const xx = 11 + 118 + 10 + (tidx * (size + 2));
+        const yy = 17;
+        if (tidx < secondsUnitlNextClient) {
+          ctx.fillRect(xx, yy, size, size);
+        } else {
+          ctx.drawRect(xx, yy, size, size);
+        }
       }
 
       // Gold

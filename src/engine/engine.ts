@@ -13,6 +13,7 @@ export abstract class Engine {
   static state: GameState;
 
   static ticks: number = 0;
+  static shouldCountTicks: boolean = true;
 
   static changeStage(nextStage: Stage): void {
     this.activeStage = nextStage;

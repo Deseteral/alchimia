@@ -6,4 +6,5 @@ export interface GameState {
   recipes: Recipe[],
   orders: Recipe[],
   gold: number,
+  completedOrders: number,
 }
