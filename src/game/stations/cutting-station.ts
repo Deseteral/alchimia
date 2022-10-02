@@ -1,3 +1,4 @@
+import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
 import { IngredientAction } from 'src/game/ingredients';
@@ -26,15 +27,23 @@ export class CuttingStation extends Station {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    ctx.drawRect(5, 5, 100, 20);
-    ctx.fillRect(5, 5, (100 * this.progress) | 0, 20);
+    const xx = 100;
+    const yy = 15;
 
-    if (this.left) {
-      ctx.drawImage(Textures.enchantingKeyLeftTexture.normal, 5, 30);
-      ctx.drawImage(Textures.enchantingKeyRightTexture.inverted, 40, 30);
-    } else {
-      ctx.drawImage(Textures.enchantingKeyLeftTexture.inverted, 5, 30);
-      ctx.drawImage(Textures.enchantingKeyRightTexture.normal, 40, 30);
-    }
+    drawFrame(xx, yy, 100, 55, ctx, () => {
+      // Progress bar
+      ctx.drawRect(xx, yy, 100, 5);
+      ctx.fillRect(xx, yy, (100 * this.progress) | 0, 5);
+
+      // Keys
+      const kxx = xx + 17;
+      if (this.left) {
+        ctx.drawImage(Textures.enchantingKeyLeftTexture.normal, kxx, 30);
+        ctx.drawImage(Textures.enchantingKeyRightTexture.inverted, kxx + 35, 30);
+      } else {
+        ctx.drawImage(Textures.enchantingKeyLeftTexture.inverted, kxx, 30);
+        ctx.drawImage(Textures.enchantingKeyRightTexture.normal, kxx + 35, 30);
+      }
+    });
   }
 }

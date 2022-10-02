@@ -1,13 +1,15 @@
 import { Engine } from 'src/engine/engine';
+import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
+import { Textures } from 'src/engine/textures';
 import { IngredientAction } from 'src/game/ingredients';
 import { Station } from 'src/game/stations/station';
 
 export class GrindingStation extends Station {
   positionX = 200;
-  positionY = 75;
+  positionY = 80;
   radius = this.positionY - 5;
-  targets = [0, 45, 90, 135, 180, 90];
+  targets = [0, 45, 90, 135, 180, 135, 90, 45];
   progress = 0;
 
   progressDrawRadius = 0;
@@ -30,6 +32,7 @@ export class GrindingStation extends Station {
       this.targets.push(firstElement);
 
       this.progress += 0.03; // TODO: Randomize progress value
+      console.log('hit, next target', this.targets[0]);
     }
 
     if (this.progress >= 1) this.onStationCompleteCallback(true, IngredientAction.GRIDING);
@@ -37,24 +40,20 @@ export class GrindingStation extends Station {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    // Frame
-    ctx.beginPath();
-    ctx.fillStyle = Engine.primaryColor;
-    ctx.arc(this.positionX, this.positionY, this.radius + 2, 0, Math.PI * 2, false);
-    ctx.fill();
+    drawFrame(this.positionX - 70, this.positionY - 70, 140, 140, ctx, () => {
+      ctx.drawImage(Textures.circleTexture.inverted, this.positionX - 70, this.positionY - 70);
+      ctx.drawImage(Textures.circleTexture.normal, this.positionX - 70, this.positionY - 70);
 
-    // Background
-    ctx.beginPath();
-    ctx.fillStyle = Engine.secondaryColor;
-    ctx.arc(this.positionX, this.positionY, this.radius, 0, Math.PI * 2, false);
-    ctx.fill();
+      // Progress fill
+      this.progressDrawRadius += ((this.progress * this.radius) - this.progressDrawRadius) * 0.1;
 
-    // Progress fill
-    this.progressDrawRadius += ((this.progress * this.radius) - this.progressDrawRadius) * 0.1;
-
-    ctx.beginPath();
-    ctx.fillStyle = Engine.primaryColor;
-    ctx.arc(this.positionX, this.positionY, this.progressDrawRadius, 0, Math.PI * 2, false);
-    ctx.fill();
+      ctx.drawImage(
+        Textures.circleTexture.inverted,
+        this.positionX - this.progressDrawRadius,
+        this.positionY - this.progressDrawRadius,
+        this.progressDrawRadius * 2,
+        this.progressDrawRadius * 2,
+      );
+    });
   }
 }

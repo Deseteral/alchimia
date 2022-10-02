@@ -90,7 +90,7 @@ export class IngredientsTable extends Table {
 
     this.drawStation(Textures.cuttingTexture, 10, 40, this.selectedStation === 0, ctx);
     this.drawStation(Textures.grindingTexture, 106, 93, this.selectedStation === 1, ctx);
-    this.drawStation(Textures.burningTexture, 190, 25, this.selectedStation === 2, ctx);
+    this.drawStation(Textures.burningTexture, 193, 25, this.selectedStation === 2, ctx);
     this.drawStation(Textures.enchantingTexture, 305, 100, this.selectedStation === 3, ctx);
 
     if (this.isIndredientPickerOpen) {

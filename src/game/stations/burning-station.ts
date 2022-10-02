@@ -1,4 +1,5 @@
 import { Engine } from 'src/engine/engine';
+import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
 import { IngredientAction } from 'src/game/ingredients';
 import { Station } from 'src/game/stations/station';
@@ -55,29 +56,26 @@ export class BurningStation extends Station {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    const x = 5;
-    const y = 5;
+    const x = 170;
+    const y = 28;
     const w = 20;
 
-    // Fill background
-    ctx.fillStyle = Engine.secondaryColor;
-    ctx.fillRect(x, y, w * 3, this.barHeight);
+    drawFrame(x, y, w * 3, this.barHeight, ctx, () => {
+      // Frame
+      ctx.drawRect(x, y, w, this.barHeight);
 
-    // Frame
-    ctx.fillStyle = Engine.primaryColor;
-    ctx.drawRect(x, y, w, this.barHeight);
+      // Cursor
+      const drawCursorY = (y + (this.barHeight - this.cursorY - this.cursorHeight)) | 0;
+      ctx.fillRect(x, drawCursorY, w, this.cursorHeight);
 
-    // Cursor
-    const drawCursorY = (y + (this.barHeight - this.cursorY - this.cursorHeight)) | 0;
-    ctx.fillRect(x, drawCursorY, w, this.cursorHeight);
+      // Target
+      const drawTargetY = (y + (this.barHeight - this.targetY));
+      ctx.fillRect(x + w + 1, drawTargetY, 5, 1);
 
-    // Target
-    const drawTargetY = (y + (this.barHeight - this.targetY));
-    ctx.fillRect(x + w + 1, drawTargetY, 5, 1);
-
-    // Progress bar
-    const progressPx = (this.progress * this.barHeight) | 0;
-    ctx.drawRect(x + (w * 2), y, (w / 3) | 0, this.barHeight);
-    ctx.fillRect(x + (w * 2), (y + this.barHeight - progressPx), (w / 3) | 0, progressPx);
+      // Progress bar
+      const progressPx = (this.progress * this.barHeight) | 0;
+      ctx.drawRect(x + (w * 2), y, (w / 3) | 0, this.barHeight);
+      ctx.fillRect(x + (w * 2), (y + this.barHeight - progressPx), (w / 3) | 0, progressPx);
+    });
   }
 }
