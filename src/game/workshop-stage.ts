@@ -9,7 +9,7 @@ import { CuttingStation } from 'src/game/stations/cutting-station';
 import { EnchantmentStation } from 'src/game/stations/enchantment-station';
 import { GrindingStation } from 'src/game/stations/grinding-station';
 import { Ingredient, IngredientAction, ingredientDisplayName, Ingredients, PreparedIngredient } from 'src/game/ingredients';
-import { drawPreparedIngredientRow, drawRecipe, getIngredientIcon, RECIPES } from 'src/game/recipes';
+import { drawPreparedIngredientRow, drawRecipe, getIngredientIcon, Recipe, RECIPES } from 'src/game/recipes';
 import { Station, StationCompleteCallback } from 'src/game/stations/station';
 import { Table } from 'src/game/table';
 import { findMatchingRecipe } from 'src/game/recipe-logic';
@@ -134,6 +134,7 @@ class BrewingTable extends Table {
   leftColumn = true;
 
   ticksUntilBrewingDone = 0;
+  makingRecipe: (Recipe | null) = null;
 
   bubbleParticles: ({ x: number, y: number, velocity: number, isSmall: boolean, offset: number })[] = [];
   ticksUntilNextBubble = 0;
@@ -183,8 +184,12 @@ class BrewingTable extends Table {
           }
         } else {
           if (this.selectedIngredientCursor === this.selectedIngredients.length) {
-            const r = findMatchingRecipe(this.selectedIngredients);
-            if (r) console.log('found recipe', r); else console.log('recipe not found');
+            const recipe = findMatchingRecipe(this.selectedIngredients);
+            if (recipe) {
+              this.makingRecipe = recipe;
+              this.ticksUntilBrewingDone = Math.randomRange(3 * 60, 7 * 60);
+              console.log('found recipe', recipe);
+            } else console.log('recipe not found');
 
             this.resetListState();
             this.showList = false;
