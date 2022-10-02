@@ -8,7 +8,7 @@ import { Recipe } from 'src/game/recipes';
 import { Table } from 'src/game/tables/table';
 
 export class ClientTable extends Table {
-  nextClientAtTicks: number = 0; // 10 * 60;
+  nextClientAtTicks: number = 10 * 60;
 
   update(isSelected: boolean): void {
     if (Engine.ticks >= this.nextClientAtTicks) {
