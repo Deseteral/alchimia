@@ -31,6 +31,18 @@ class ClientTable extends Table {
         Font.draw(orderRecipe.name, 11, yy, ctx);
       }
     });
+
+    drawFrame(11 + 118, 11, 260, 16, ctx, () => {
+      // Time counter
+      for (let tidx = 0; tidx < 10; tidx += 1) {
+        const size = 5;
+        ctx.fillRect(11 + 118 + 10 + (tidx * (size + 2)), 17, size, size);
+      }
+
+      // Gold
+      ctx.drawImage(Textures.coinTexture.normal, 300, 11);
+      Font.draw(Engine.state.gold.toString(), 300 + 16 + 2, 5, ctx);
+    });
   }
 }
 
