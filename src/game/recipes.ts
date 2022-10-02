@@ -1,7 +1,8 @@
 import { Font } from 'src/engine/font';
 import { Textures } from 'src/engine/textures';
 import { Ingredient, IngredientAction, IngredientActions, Ingredients, PreparedIngredient } from 'src/game/ingredients';
-import { preparedIngredientEquals } from 'src/game/recipe-logic';
+import { findMatchingRecipe, preparedIngredientEquals } from 'src/game/recipe-logic';
+import { POTION_NAMES } from 'src/game/potion-names';
 
 export interface Recipe {
   name: string,
@@ -49,30 +50,43 @@ export function generateRecipes(): Recipe[] {
   const recipes: Recipe[] = [];
 
   for (let recipeIdx = 0; recipeIdx < 15; recipeIdx += 1) {
-    const ingredientCount = recipeIdx <= 5 ? Math.randomRange(1, 2) : Math.randomRange(3, 5);
-    const ingredients: PreparedIngredient[] = [];
+    let recipeGood = false;
+    let recipeTries = 10;
 
-    for (let ingredientIdx = 0; ingredientIdx < ingredientCount; ingredientIdx += 1) {
-      let good = false;
-      let tries = 10;
+    while (!recipeGood && recipeTries >= 0) {
+      const ingredientCount = recipeIdx <= 5 ? Math.randomRange(1, 2) : Math.randomRange(3, 5);
+      const ingredients: PreparedIngredient[] = [];
 
-      while (!good && tries >= 0) {
-        const ingredientId = Math.randomRange(0, (Ingredients.length - 1));
-        const actionId = Math.randomRange(0, (IngredientActions.length - 1));
-        const pi: PreparedIngredient = { ingredient: Ingredients[ingredientId], action: IngredientActions[actionId] };
+      for (let ingredientIdx = 0; ingredientIdx < ingredientCount; ingredientIdx += 1) {
+        let ingredientGood = false;
+        let ingredientTries = 10;
 
-        const foundIdx = ingredients.findIndex((pp) => preparedIngredientEquals(pi, pp));
+        while (!ingredientGood && ingredientTries >= 0) {
+          const ingredientId = Math.randomRange(0, (Ingredients.length - 1));
+          const actionId = Math.randomRange(0, (IngredientActions.length - 1));
+          const pi: PreparedIngredient = { ingredient: Ingredients[ingredientId], action: IngredientActions[actionId] };
 
-        if (foundIdx === -1) {
-          ingredients.push(pi);
-          good = true;
+          const foundIdx = ingredients.findIndex((pp) => preparedIngredientEquals(pi, pp));
+
+          if (foundIdx === -1) {
+            ingredients.push(pi);
+            ingredientGood = true;
+          }
+
+          ingredientTries -= 1;
         }
+      }
 
-        tries -= 1;
+      const name: string = POTION_NAMES[Math.randomRange(0, POTION_NAMES.length - 1)];
+      const recipe: Recipe = { name, ingredients };
+
+      recipeTries -= 1;
+
+      if (findMatchingRecipe(recipe.ingredients, recipes) === null) {
+        recipes.push(recipe);
+        recipeGood = true;
       }
     }
-
-    recipes.push({ name: `Recipe ${recipeIdx + 1}`, ingredients });
   }
 
   return recipes;
