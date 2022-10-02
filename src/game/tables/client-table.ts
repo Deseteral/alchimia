@@ -3,11 +3,12 @@ import { Font } from 'src/engine/font';
 import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
+import { newClientMessage } from 'src/game/messages';
 import { Recipe } from 'src/game/recipes';
 import { Table } from 'src/game/tables/table';
 
 export class ClientTable extends Table {
-  nextClientAtTicks: number = 10 * 60;
+  nextClientAtTicks: number = 0; // 10 * 60;
 
   update(isSelected: boolean): void {
     if (Engine.ticks >= this.nextClientAtTicks) {
@@ -17,6 +18,9 @@ export class ClientTable extends Table {
       Engine.state.orders.push(recipe);
 
       this.nextClientAtTicks = Engine.ticks + (60 * 10); // I assume the game is running at 60 fps so we can use that to measure time, it's stupid but will be easier to implement pause.
+
+      Engine.state.messageBoard.messages.unshift(newClientMessage(recipe));
+      console.log(Engine.state.messageBoard.messages);
 
       console.log('new client with order', recipe);
     }
@@ -57,16 +61,15 @@ export class ClientTable extends Table {
       Font.draw(Engine.state.gold.toString(), 300 + 16 + 2, 5, ctx);
     });
 
-    // max line len 37
     const messageFrameWidth: number = 260;
     drawFrame(11 + 118, 11 + 34, messageFrameWidth, 184, ctx, () => {
       let line = 0;
-      [...Engine.state.messageBoard.messages].reverse().forEach((message) => {
+      [...Engine.state.messageBoard.messages].reverse().forEach((message, msgIdx) => {
         const basexx: number = 11 + 118;
 
         [...message.text].reverse().forEach((txt) => {
           const xx: number = message.rightSide ? (basexx + messageFrameWidth - Font.lineLengthPx(txt, true) + 15) : basexx;
-          const yy: number = 205 - (line * ((Font.glyphSizeV / 3) | 0));
+          const yy: number = 205 - (line * ((Font.glyphSizeV / 3) | 0)) - (msgIdx * 7);
           Font.draw(txt, xx, yy, ctx, true);
 
           line += 1;
