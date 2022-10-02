@@ -182,7 +182,6 @@ class BrewingTable extends Table {
   makingRecipe: (Recipe | null) = null;
 
   bubbleParticles: ({ x: number, y: number, velocity: number, isSmall: boolean, offset: number })[] = [];
-  ticksUntilNextBubble = 0;
 
   update(): void {
     this.ticksUntilBrewingDone -= 1;
@@ -257,8 +256,6 @@ class BrewingTable extends Table {
       return;
     }
 
-    this.ticksUntilNextBubble -= 1;
-
     if (Input.getKeyDown('left')) {
       this.onPreviousTableCb();
     } else if (Input.getKeyDown('a')) {
@@ -268,24 +265,27 @@ class BrewingTable extends Table {
       this.openBook();
     }
 
-    if (this.ticksUntilNextBubble <= 0 && this.ticksUntilBrewingDone > 0) {
+    // Add new particles
+    if (this.ticksUntilBrewingDone > 0) {
       this.bubbleParticles.push({
-        x: Math.randomRange(280, 330),
-        y: Math.randomRange(80, 100),
+        x: Math.randomRange(267, 360),
+        y: Math.randomRange(70, 110),
         velocity: 0,
         isSmall: Math.random() > 0.5,
         offset: Math.randomRange(0, 1000),
       });
-      this.ticksUntilNextBubble = Math.randomRange(10, 30);
     }
 
+    // Move particles
     for (let i = 0; i < this.bubbleParticles.length; i += 1) {
       this.bubbleParticles[i].velocity += 0.01;
       this.bubbleParticles[i].y -= this.bubbleParticles[i].velocity;
     }
 
+    // Clean unused particles
     this.bubbleParticles = this.bubbleParticles.filter((b) => b.y > -10);
 
+    // Check if brewing is done
     if (this.ticksUntilBrewingDone <= 0 && this.makingRecipe !== null) {
       const recipeInOrdersIdx: number = Engine.state.orders.findIndex((r) => (r.name === this.makingRecipe?.name));
       Engine.state.orders.splice(recipeInOrdersIdx, 1);
@@ -298,7 +298,7 @@ class BrewingTable extends Table {
 
   render(ctx: CanvasRenderingContext2D): void {
     ctx.drawImage(Textures.tableTexture.normal, 0, 0);
-    ctx.drawImage(Textures.cauldronTexture.normal, 250, 70);
+    ctx.drawImage(Textures.cauldronTexture.normal, 260, 80);
 
     if (this.showList) {
       const listWidth: number = 80;
@@ -358,7 +358,7 @@ class BrewingTable extends Table {
 }
 
 export class WorkshopStage extends Stage {
-  selectedTable = 0;
+  selectedTable = 2;
   tables = [
     new ClientTable(() => this.nextTable(), () => this.prevTable(), () => this.openBook()),
     new IngredientsTable(() => this.nextTable(), () => this.prevTable(), () => this.openBook()),
