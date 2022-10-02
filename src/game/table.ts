@@ -1,14 +1,14 @@
-import { Stage } from 'src/engine/stage';
-
-export abstract class Table extends Stage {
+export abstract class Table {
   onNextTableCb: () => void;
   onPreviousTableCb: () => void;
   openBook: () => void;
 
   constructor(onNextTableCb: () => void, onPreviousTableCb: () => void, openBook: () => void) {
-    super();
     this.onNextTableCb = onNextTableCb;
     this.onPreviousTableCb = onPreviousTableCb;
     this.openBook = openBook;
   }
+
+  abstract update(isSelected: boolean): void;
+  abstract render(ctx: CanvasRenderingContext2D): void;
 }

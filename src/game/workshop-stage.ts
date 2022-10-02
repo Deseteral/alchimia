@@ -17,7 +17,7 @@ import { findMatchingRecipe } from 'src/game/recipe-logic';
 class ClientTable extends Table {
   nextClientAtTicks: number = 10 * 60;
 
-  update(): void {
+  update(isSelected: boolean): void {
     if (Engine.ticks >= this.nextClientAtTicks) {
       const recipeRange: number = (Engine.state.completedOrders <= 3) ? 5 : (Engine.state.recipes.length - 1);
       const recipeIdx: number = Math.randomRange(0, recipeRange);
@@ -29,8 +29,8 @@ class ClientTable extends Table {
       console.log('new client with order', recipe);
     }
 
-    if (Input.getKeyDown('right')) this.onNextTableCb();
-    if (Input.getKeyDown('down')) this.openBook();
+    if (Input.getKeyDown('right') && isSelected) this.onNextTableCb();
+    if (Input.getKeyDown('down') && isSelected) this.openBook();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -93,22 +93,22 @@ class IngredientsTable extends Table {
 
   ignoringInputTicks = 0;
 
-  update(): void {
+  update(isSelected: boolean): void {
     Engine.shouldCountTicks = !this.activeStation;
 
-    if (this.activeStation) {
+    if (this.activeStation && isSelected) {
       this.activeStation.update();
       return;
     }
 
     this.ignoringInputTicks -= 1;
 
-    if (!this.isIndredientPickerOpen && Input.getKeyDown('a') && this.canUseInput()) {
+    if (!this.isIndredientPickerOpen && Input.getKeyDown('a') && this.canUseInput(isSelected)) {
       this.isIndredientPickerOpen = true;
       return;
     }
 
-    if (this.isIndredientPickerOpen) {
+    if (this.isIndredientPickerOpen && isSelected) {
       if (Input.getKeyDown('up')) this.ingredientCursor -= 1;
       if (Input.getKeyDown('down')) this.ingredientCursor += 1;
       if (Input.getKeyDown('b')) {
@@ -143,14 +143,14 @@ class IngredientsTable extends Table {
       return;
     }
 
-    if (Input.getKeyDown('right') && this.canUseInput()) this.selectedStation += 1;
-    if (Input.getKeyDown('left') && this.canUseInput()) this.selectedStation -= 1;
+    if (Input.getKeyDown('right') && this.canUseInput(isSelected)) this.selectedStation += 1;
+    if (Input.getKeyDown('left') && this.canUseInput(isSelected)) this.selectedStation -= 1;
 
     if (this.selectedStation < 0) {
       this.onPreviousTableCb();
     } else if (this.selectedStation > 3) {
       this.onNextTableCb();
-    } else if (Input.getKeyDown('down')) {
+    } else if (Input.getKeyDown('down') && this.canUseInput(isSelected)) {
       this.openBook();
     }
 
@@ -191,8 +191,8 @@ class IngredientsTable extends Table {
     this.ignoringInputTicks = (1.5 * 60) | 0;
   }
 
-  private canUseInput(): boolean {
-    return this.ignoringInputTicks <= 0;
+  private canUseInput(isSelected: boolean): boolean {
+    return this.ignoringInputTicks <= 0 && isSelected;
   }
 }
 
@@ -209,10 +209,10 @@ class BrewingTable extends Table {
 
   bubbleParticles: ({ x: number, y: number, velocity: number, isSmall: boolean, offset: number })[] = [];
 
-  update(): void {
+  update(isSelected: boolean): void {
     this.ticksUntilBrewingDone -= 1;
 
-    if (this.showList) {
+    if (this.showList && isSelected) {
       if (Input.getKeyDown('up')) {
         if (this.leftColumn) {
           this.ingredientCursor -= 1;
@@ -283,13 +283,15 @@ class BrewingTable extends Table {
       return;
     }
 
-    if (Input.getKeyDown('left')) {
-      this.onPreviousTableCb();
-    } else if (Input.getKeyDown('a')) {
-      this.resetListState();
-      this.showList = true;
-    } else if (Input.getKeyDown('down')) {
-      this.openBook();
+    if (isSelected) {
+      if (Input.getKeyDown('left')) {
+        this.onPreviousTableCb();
+      } else if (Input.getKeyDown('a')) {
+        this.resetListState();
+        this.showList = true;
+      } else if (Input.getKeyDown('down')) {
+        this.openBook();
+      }
     }
 
     // Add new particles
@@ -316,11 +318,18 @@ class BrewingTable extends Table {
     if (this.ticksUntilBrewingDone === 0) {
       if (this.makingRecipe) {
         const recipeInOrdersIdx: number = Engine.state.orders.findIndex((r) => (r.name === this.makingRecipe?.name));
-        Engine.state.orders.splice(recipeInOrdersIdx, 1);
-        Engine.state.completedOrders += 1;
-        Engine.state.gold += this.makingRecipe.ingredients.length;
+
+        if (recipeInOrdersIdx >= 0) {
+          Engine.state.orders.splice(recipeInOrdersIdx, 1);
+          Engine.state.completedOrders += 1;
+          Engine.state.gold += this.makingRecipe.ingredients.length;
+
+          console.log(`completed order ${recipeInOrdersIdx}`);
+        } else {
+          console.log('made potion but nobody ordered it', this.makingRecipe);
+        }
+
         this.makingRecipe = null;
-        console.log(`completed order ${recipeInOrdersIdx}`);
       } else {
         console.log('made potion that does not exist');
       }
@@ -405,7 +414,10 @@ export class WorkshopStage extends Stage {
       return;
     }
 
-    this.tables[this.selectedTable].update();
+    const thisFrameSelectedTable = this.selectedTable;
+    this.tables.forEach((table, idx) => {
+      table.update(thisFrameSelectedTable === idx);
+    });
   }
 
   render(ctx: CanvasRenderingContext2D): void {
