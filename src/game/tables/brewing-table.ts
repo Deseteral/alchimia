@@ -4,7 +4,7 @@ import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
 import { PreparedIngredient } from 'src/game/ingredients';
-import { orderCompleteMessage } from 'src/game/messages';
+import { orderCompleteMessage, recipeDoesNotExistMessage, recipeWithoutOrder } from 'src/game/messages';
 import { findMatchingRecipe } from 'src/game/recipe-logic';
 import { drawPreparedIngredientRow, Recipe } from 'src/game/recipes';
 import { Table } from 'src/game/tables/table';
@@ -141,11 +141,13 @@ export class BrewingTable extends Table {
 
           console.log(`completed order ${recipeInOrdersIdx}`);
         } else {
+          Engine.state.messageBoard.messages.unshift(recipeWithoutOrder());
           console.log('made potion but nobody ordered it', this.makingRecipe);
         }
 
         this.makingRecipe = null;
       } else {
+        Engine.state.messageBoard.messages.unshift(recipeDoesNotExistMessage());
         console.log('made potion that does not exist');
       }
     }

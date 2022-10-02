@@ -116,3 +116,31 @@ export function orderCompleteMessage(recipe: Recipe): Message {
     rightSide: true,
   };
 }
+
+export function recipeDoesNotExistMessage(): Message {
+  const list: string[] = [
+    'What is that? Ugh!',
+    'Yuck!',
+    'Bleh! What have I done?!',
+    'Oh no! How did that happen?!',
+  ];
+
+  return {
+    text: split(choice(list)),
+    rightSide: true,
+  };
+}
+
+export function recipeWithoutOrder(): Message {
+  const list: string[] = [
+    "This is good, but why I've made this?",
+    'Nobody wants this.',
+    'Good potion, bad thinking.',
+    "I've messed up some orders.",
+  ];
+
+  return {
+    text: split(choice(list)),
+    rightSide: true,
+  };
+}
