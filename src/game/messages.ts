@@ -70,10 +70,49 @@ export function newClientMessage(recipe: Recipe): Message {
     choice(end),
   ].filter((s) => s.length > 0).join(' ');
 
-  console.log(msg);
-
   return {
     text: split(msg),
     rightSide: false,
+  };
+}
+
+export function orderCompleteMessage(recipe: Recipe): Message {
+  const starters: string[] = [
+    'There you go!',
+    'Sir!',
+    'Madame!',
+  ];
+
+  const middle: string[] = [
+    `Your ${recipe.name}.`,
+    `${recipe.name} for you.`,
+    `One ${recipe.name} for you.`,
+    `One ${recipe.name}.`,
+    'Your order.',
+    'This is for you.',
+    'I have your order!',
+    '',
+  ];
+
+  const end: string[] = [
+    'Bye!',
+    'Goodbye!',
+    'Bye for now!',
+    'See you!',
+    'Be seeing you!',
+    'See you soon!',
+    'Cheerio!',
+    'Catch you later!',
+  ];
+
+  const msg: string = [
+    Math.random() < 0.5 ? choice(starters) : '',
+    choice(middle),
+    choice(end),
+  ].filter((s) => s.length > 0).join(' ');
+
+  return {
+    text: split(msg),
+    rightSide: true,
   };
 }
