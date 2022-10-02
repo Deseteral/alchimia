@@ -224,12 +224,15 @@ class BrewingTable extends Table {
           }
         } else {
           if (this.selectedIngredientCursor === this.selectedIngredients.length) {
-            const recipe = findMatchingRecipe(this.selectedIngredients, Engine.state.recipes);
+            const recipe: (Recipe | null) = findMatchingRecipe(this.selectedIngredients, Engine.state.recipes);
+
             if (recipe) {
               this.makingRecipe = recipe;
               this.ticksUntilBrewingDone = Math.randomRange(3 * 60, 7 * 60);
-              console.log('found recipe', recipe);
-            } else console.log('recipe not found');
+              console.log('making recipe', recipe);
+            } else {
+              console.log('recipe does not exist');
+            }
 
             this.resetListState();
             this.showList = false;
@@ -277,6 +280,15 @@ class BrewingTable extends Table {
     }
 
     this.bubbleParticles = this.bubbleParticles.filter((b) => b.y > -10);
+
+    if (this.ticksUntilBrewingDone <= 0 && this.makingRecipe !== null) {
+      const recipeInOrdersIdx: number = Engine.state.orders.findIndex((r) => (r.name === this.makingRecipe?.name));
+      Engine.state.orders.splice(recipeInOrdersIdx, 1);
+      Engine.state.completedOrders += 1;
+      Engine.state.gold += this.makingRecipe.ingredients.length;
+      this.makingRecipe = null;
+      console.log(`completed order ${recipeInOrdersIdx}`);
+    }
   }
 
   render(ctx: CanvasRenderingContext2D): void {
