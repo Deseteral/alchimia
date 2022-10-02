@@ -52,7 +52,11 @@ export class IngredientsTable extends Table {
 
         const cb: StationCompleteCallback = (success: boolean, action: IngredientAction) => {
           if (success) {
-            Engine.state.preparedIngredients.push({ ingredient: selectedIngredient, action });
+            const amount = Math.randomRange(1, 2);
+            for (let a = 0; a < amount; a += 1) {
+              Engine.state.preparedIngredients.push({ ingredient: selectedIngredient, action });
+            }
+            console.log(`preparing ingredient successful, receiving ${amount}`);
           }
           this.exitStation();
         };

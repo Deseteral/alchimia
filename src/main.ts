@@ -1,4 +1,3 @@
-import { DaySummaryStage } from 'src/day-summary-stage';
 import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { Input } from 'src/engine/input';
