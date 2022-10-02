@@ -230,9 +230,10 @@ class BrewingTable extends Table {
           if (this.selectedIngredientCursor === this.selectedIngredients.length) {
             const recipe: (Recipe | null) = findMatchingRecipe(this.selectedIngredients, Engine.state.recipes);
 
+            this.makingRecipe = recipe;
+            this.ticksUntilBrewingDone = Math.randomRange(3 * 60, 7 * 60);
+
             if (recipe) {
-              this.makingRecipe = recipe;
-              this.ticksUntilBrewingDone = Math.randomRange(3 * 60, 7 * 60);
               console.log('making recipe', recipe);
             } else {
               console.log('recipe does not exist');
@@ -286,13 +287,17 @@ class BrewingTable extends Table {
     this.bubbleParticles = this.bubbleParticles.filter((b) => b.y > -10);
 
     // Check if brewing is done
-    if (this.ticksUntilBrewingDone <= 0 && this.makingRecipe !== null) {
-      const recipeInOrdersIdx: number = Engine.state.orders.findIndex((r) => (r.name === this.makingRecipe?.name));
-      Engine.state.orders.splice(recipeInOrdersIdx, 1);
-      Engine.state.completedOrders += 1;
-      Engine.state.gold += this.makingRecipe.ingredients.length;
-      this.makingRecipe = null;
-      console.log(`completed order ${recipeInOrdersIdx}`);
+    if (this.ticksUntilBrewingDone === 0) {
+      if (this.makingRecipe) {
+        const recipeInOrdersIdx: number = Engine.state.orders.findIndex((r) => (r.name === this.makingRecipe?.name));
+        Engine.state.orders.splice(recipeInOrdersIdx, 1);
+        Engine.state.completedOrders += 1;
+        Engine.state.gold += this.makingRecipe.ingredients.length;
+        this.makingRecipe = null;
+        console.log(`completed order ${recipeInOrdersIdx}`);
+      } else {
+        console.log('made potion that does not exist');
+      }
     }
   }
 
