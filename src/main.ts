@@ -3,6 +3,7 @@ import { Font } from 'src/engine/font';
 import { Input } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
 import { MainMenuStage } from 'src/main-menu-stage';
+import { StoryStage } from 'src/story-stage';
 
 const canvas: HTMLCanvasElement = document.querySelector('canvas')!;
 const context: CanvasRenderingContext2D = canvas.getContext('2d')!;

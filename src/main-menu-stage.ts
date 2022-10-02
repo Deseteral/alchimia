@@ -6,6 +6,7 @@ import { Stage } from 'src/engine/stage';
 import { Textures } from 'src/engine/textures';
 import { WorkshopStage } from 'src/game/workshop-stage';
 import { HowToPlayStage } from 'src/how-to-play-stage';
+import { StoryStage } from 'src/story-stage';
 
 export class MainMenuStage extends Stage {
   cursor = 0;
@@ -23,7 +24,7 @@ export class MainMenuStage extends Stage {
     if (Input.getKeyDown('a')) {
       if (this.cursor === 0) {
         Engine.newGame();
-        Engine.changeStage(new WorkshopStage());
+        Engine.changeStage(new StoryStage());
       } else if (this.hasSaveData && this.cursor === 1) {
         Engine.loadGame();
         Engine.changeStage(new WorkshopStage());
