@@ -89,5 +89,7 @@ export function generateRecipes(): Recipe[] {
     }
   }
 
+  console.log(`generated ${recipes.length} recipes`, recipes);
+
   return recipes;
 }

@@ -1,4 +1,3 @@
-import { Engine } from 'src/engine/engine';
 import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
