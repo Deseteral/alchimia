@@ -74,6 +74,8 @@ class IngredientsTable extends Table {
   isIndredientPickerOpen: boolean = false;
   ingredientCursor: number = 0;
 
+  ignoringInputTicks = 0;
+
   update(): void {
     Engine.shouldCountTicks = !this.activeStation;
 
@@ -82,7 +84,9 @@ class IngredientsTable extends Table {
       return;
     }
 
-    if (!this.isIndredientPickerOpen && Input.getKeyDown('a')) {
+    this.ignoringInputTicks -= 1;
+
+    if (!this.isIndredientPickerOpen && Input.getKeyDown('a') && this.canUseInput()) {
       this.isIndredientPickerOpen = true;
       return;
     }
@@ -122,8 +126,8 @@ class IngredientsTable extends Table {
       return;
     }
 
-    if (Input.getKeyDown('right')) this.selectedStation += 1;
-    if (Input.getKeyDown('left')) this.selectedStation -= 1;
+    if (Input.getKeyDown('right') && this.canUseInput()) this.selectedStation += 1;
+    if (Input.getKeyDown('left') && this.canUseInput()) this.selectedStation -= 1;
 
     if (this.selectedStation < 0) {
       this.onPreviousTableCb();
@@ -167,6 +171,11 @@ class IngredientsTable extends Table {
 
   private exitStation(): void {
     this.activeStation = null;
+    this.ignoringInputTicks = (1.5 * 60) | 0;
+  }
+
+  private canUseInput(): boolean {
+    return this.ignoringInputTicks <= 0;
   }
 }
 
@@ -363,7 +372,7 @@ class BrewingTable extends Table {
 }
 
 export class WorkshopStage extends Stage {
-  selectedTable = 2;
+  selectedTable = 0;
   tables = [
     new ClientTable(() => this.nextTable(), () => this.prevTable(), () => this.openBook()),
     new IngredientsTable(() => this.nextTable(), () => this.prevTable(), () => this.openBook()),
