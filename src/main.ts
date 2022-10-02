@@ -21,7 +21,8 @@ function tick(): void {
 
   Input.update();
 
-  Engine.ticks += 1;
+  if (Engine.shouldCountTicks) Engine.ticks += 1;
+
   requestAnimationFrame(tick);
 }
 

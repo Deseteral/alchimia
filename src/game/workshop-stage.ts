@@ -25,6 +25,8 @@ class ClientTable extends Table {
       Engine.state.orders.push(recipe);
 
       this.nextClientAtTicks = Engine.ticks + (60 * 10); // I assume the game is running at 60 fps so we can use that to measure time, it's stupid but will be easier to implement pause.
+
+      console.log('new client with order', recipe);
     }
 
     if (Input.getKeyDown('right')) this.onNextTableCb();
@@ -73,6 +75,8 @@ class IngredientsTable extends Table {
   ingredientCursor: number = 0;
 
   update(): void {
+    Engine.shouldCountTicks = !this.activeStation;
+
     if (this.activeStation) {
       this.activeStation.update();
       return;
