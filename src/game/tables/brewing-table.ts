@@ -5,7 +5,7 @@ import { Input } from 'src/engine/input';
 import { playSound, Sound } from 'src/engine/sounds';
 import { Textures } from 'src/engine/textures';
 import { PreparedIngredient } from 'src/game/ingredients';
-import { orderCompleteMessage, recipeDoesNotExistMessage, recipeWithoutOrderMessage } from 'src/game/messages';
+import { clientGoodbyeMessasge, orderCompleteMessage, recipeDoesNotExistMessage, recipeWithoutOrderMessage } from 'src/game/messages';
 import { findMatchingRecipe } from 'src/game/recipe-logic';
 import { drawPreparedIngredientRow, Recipe } from 'src/game/recipes';
 import { Table } from 'src/game/tables/table';
@@ -147,6 +147,7 @@ export class BrewingTable extends Table {
           Engine.state.gold += this.makingRecipe.ingredients.length;
 
           Engine.state.messageBoard.messages.unshift(orderCompleteMessage(this.makingRecipe));
+          Engine.state.messageBoard.messages.unshift(clientGoodbyeMessasge());
 
           playSound(Sound.GOOD_POTION);
 

@@ -117,7 +117,20 @@ export function orderCompleteMessage(recipe: Recipe): Message {
   };
 }
 
-// TODO: Add goodbye message
+export function clientGoodbyeMessasge(): Message {
+  const list: string[] = [
+    'Thank you!',
+    'Bye!',
+    'See you later!',
+    'Perfect! Ciao!',
+    'Awesome, thank you so much!',
+  ];
+
+  return {
+    text: split(choice(list)),
+    rightSide: true,
+  };
+}
 
 export function recipeDoesNotExistMessage(): Message {
   const list: string[] = [
