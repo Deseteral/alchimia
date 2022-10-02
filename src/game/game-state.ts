@@ -14,4 +14,6 @@ export interface GameState {
 
   orders: Recipe[],
   messageBoard: MessageBoard,
+
+  debtPaid: boolean,
 }

@@ -62,6 +62,7 @@ export abstract class Engine {
       messageBoard: { messages: [] },
       day: 0,
       goldLastDay: 0,
+      debtPaid: false,
     };
   }
 }

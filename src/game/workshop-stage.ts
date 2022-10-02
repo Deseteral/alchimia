@@ -88,6 +88,11 @@ export class WorkshopStage extends Stage {
     Engine.state.orders = [];
 
     Engine.state.goldLastDay = Engine.state.gold - this.goldAtTheStartOfTheDay;
+
+    if (!Engine.state.debtPaid && Engine.state.gold >= 500) {
+      Engine.state.gold -= 500;
+      Engine.state.debtPaid = true;
+    }
   }
 
   private updateBook(): void {
