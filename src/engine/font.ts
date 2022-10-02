@@ -3,6 +3,7 @@ import { Engine } from 'src/engine/engine';
 export abstract class Font {
   private static readonly fontSize = 100;
   private static readonly fontGlyphSize = this.fontSize * 2;
+
   static readonly glyphSizeH = this.fontGlyphSize / 6;
   static readonly glyphSizeV = this.fontGlyphSize / 5;
 
@@ -37,9 +38,18 @@ export abstract class Font {
     }
   }
 
-  static draw(text: string, x: number, y: number, ctx: CanvasRenderingContext2D): void {
+  static draw(text: string, x: number, y: number, ctx: CanvasRenderingContext2D, small: boolean = false): void {
     text.split('').forEach((letter, idx) => {
-      ctx.drawImage(Font.glyphs[letter], (x + (idx * (this.fontSize - 90))), y, this.glyphSizeH, this.glyphSizeV);
+      const w: number = small ? (this.glyphSizeH / 1.4) : this.glyphSizeH;
+      const h: number = small ? (this.glyphSizeV / 1.4) : this.glyphSizeV;
+      const spacing: number = small ? 93 : 90;
+      ctx.drawImage(Font.glyphs[letter], (x + (idx * (this.fontSize - spacing))), y, w, h);
     });
+  }
+
+  static lineLengthPx(text: string, small: boolean): number {
+    const w: number = small ? (this.glyphSizeH / 1.4) : this.glyphSizeH;
+    const spacing: number = small ? 93 : 90;
+    return (((text.length - 1) * (this.fontSize - spacing)) + w) | 0;
   }
 }

@@ -64,6 +64,18 @@ class ClientTable extends Table {
       ctx.drawImage(Textures.coinTexture.normal, 300, 11);
       Font.draw(Engine.state.gold.toString(), 300 + 16 + 2, 5, ctx);
     });
+
+    // max line len 37
+    const messageFrameWidth: number = 260;
+    drawFrame(11 + 118, 11 + 34, messageFrameWidth, 184, ctx, () => {
+      ['line 1 and how long it can be wow eve', 'line 2', 'line 3', 'line 4', 'line 5', 'line 6', 'line 7', 'line 8', 'line 9'].forEach((msg, idx) => {
+        const drawFromRight: boolean = idx % 2 === 0;
+        const basexx = 11 + 118;
+        const xx = drawFromRight ? (basexx + messageFrameWidth - Font.lineLengthPx(msg, true) + 15) : basexx;
+        const yy = 205 - (idx * ((Font.glyphSizeV / 3) | 0));
+        Font.draw(msg, xx, yy, ctx, true);
+      });
+    });
   }
 }
 
