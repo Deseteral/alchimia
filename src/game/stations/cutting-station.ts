@@ -1,3 +1,5 @@
+import { Engine } from 'src/engine/engine';
+import { Font } from 'src/engine/font';
 import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
@@ -44,6 +46,13 @@ export class CuttingStation extends Station {
         ctx.drawImage(Textures.enchantingKeyLeftTexture.inverted, kxx, 30);
         ctx.drawImage(Textures.enchantingKeyRightTexture.normal, kxx + 35, 30);
       }
+    });
+
+    const helpWidth = 170;
+    const helpX = Engine.width - helpWidth - 9 - 2;
+    drawFrame(helpX, yy, helpWidth, 30, ctx, () => {
+      Font.draw('Press left and right key', helpX, yy, ctx, true);
+      Font.draw('alternately to cut', helpX, yy + 12, ctx, true);
     });
   }
 }

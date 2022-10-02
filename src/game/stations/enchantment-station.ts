@@ -1,4 +1,6 @@
 import { Engine } from 'src/engine/engine';
+import { Font } from 'src/engine/font';
+import { drawFrame } from 'src/engine/frame';
 import { Input, Keys } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
 import { IngredientAction } from 'src/game/ingredients';
@@ -129,5 +131,14 @@ export class EnchantmentStation extends Station {
     ctx.drawImage(Textures.enchantingKeyRightTexture.normal, noteBarX, noteBarY + (1 * (this.noteSize + 5)));
     ctx.drawImage(Textures.enchantingKeyDownTexture.normal, noteBarX, noteBarY + (2 * (this.noteSize + 5)));
     ctx.drawImage(Textures.enchantingKeyLeftTexture.normal, noteBarX, noteBarY + (3 * (this.noteSize + 5)));
+
+    // Help
+    const helpWidth = 270;
+    const helpX = 9 + 2;
+    const helpY = 180;
+    drawFrame(helpX, helpY, helpWidth, 30, ctx, () => {
+      Font.draw("Press the proper key when it's passing", helpX, helpY, ctx, true);
+      Font.draw('the line to enchant the ingredient', helpX, helpY + 12, ctx, true);
+    });
   }
 }

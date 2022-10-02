@@ -1,3 +1,5 @@
+import { Engine } from 'src/engine/engine';
+import { Font } from 'src/engine/font';
 import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
@@ -5,7 +7,7 @@ import { IngredientAction } from 'src/game/ingredients';
 import { Station } from 'src/game/stations/station';
 
 export class GrindingStation extends Station {
-  positionX = 200;
+  positionX = 130;
   positionY = 80;
   radius = this.positionY - 5;
   targets = [0, 45, 90, 135, 180, 135, 90, 45];
@@ -39,9 +41,12 @@ export class GrindingStation extends Station {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    drawFrame(this.positionX - 70, this.positionY - 70, 140, 140, ctx, () => {
-      ctx.drawImage(Textures.circleTexture.inverted, this.positionX - 70, this.positionY - 70);
-      ctx.drawImage(Textures.circleTexture.normal, this.positionX - 70, this.positionY - 70);
+    const xx = this.positionX - 70;
+    const yy = this.positionY - 70;
+
+    drawFrame(xx, yy, 140, 140, ctx, () => {
+      ctx.drawImage(Textures.circleTexture.inverted, xx, yy);
+      ctx.drawImage(Textures.circleTexture.normal, xx, yy);
 
       // Progress fill
       this.progressDrawRadius += ((this.progress * this.radius) - this.progressDrawRadius) * 0.1;
@@ -53,6 +58,14 @@ export class GrindingStation extends Station {
         this.progressDrawRadius * 2,
         this.progressDrawRadius * 2,
       );
+    });
+
+    const helpWidth = 170;
+    const helpX = Engine.width - helpWidth - 9 - 2;
+    drawFrame(helpX, yy, helpWidth, 42, ctx, () => {
+      Font.draw('Move the mouse cursor', helpX, yy, ctx, true);
+      Font.draw('around the circle to', helpX, yy + 12, ctx, true);
+      Font.draw('grind the ingredient', helpX, yy + 12 * 2, ctx, true);
     });
   }
 }

@@ -1,4 +1,5 @@
 import { Engine } from 'src/engine/engine';
+import { Font } from 'src/engine/font';
 import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
 import { IngredientAction } from 'src/game/ingredients';
@@ -56,7 +57,7 @@ export class BurningStation extends Station {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    const x = 170;
+    const x = 140;
     const y = 28;
     const w = 20;
 
@@ -76,6 +77,16 @@ export class BurningStation extends Station {
       const progressPx = (this.progress * this.barHeight) | 0;
       ctx.drawRect(x + (w * 2), y, (w / 3) | 0, this.barHeight);
       ctx.fillRect(x + (w * 2), (y + this.barHeight - progressPx), (w / 3) | 0, progressPx);
+    });
+
+    // Help
+    const helpWidth = 170;
+    const helpX = Engine.width - helpWidth - 9 - 2;
+    drawFrame(helpX, y, helpWidth, 55, ctx, () => {
+      Font.draw('Press up key to move the', helpX, y, ctx, true);
+      Font.draw('burning zone up. Keep', helpX, y + 12, ctx, true);
+      Font.draw('the cursor in the zone', helpX, y + 12 * 2, ctx, true);
+      Font.draw('to burn the ingredient.', helpX, y + 12 * 3, ctx, true);
     });
   }
 }
