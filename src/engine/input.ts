@@ -38,23 +38,65 @@ export abstract class Input {
 
   static initialize(canvas: HTMLCanvasElement): void {
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'w' || e.key === 'ArrowUp') Input.keyState.up = true;
-      if (e.key === 's' || e.key === 'ArrowDown') Input.keyState.down = true;
-      if (e.key === 'a' || e.key === 'ArrowLeft') Input.keyState.left = true;
-      if (e.key === 'd' || e.key === 'ArrowRight') Input.keyState.right = true;
+      let keyHit = false;
 
-      if (e.key === 'Enter') Input.keyState.a = true;
-      if (e.key === 'Escape') Input.keyState.b = true;
+      if (e.key === 'w' || e.key === 'ArrowUp') {
+        Input.keyState.up = true;
+        keyHit = true;
+      }
+      if (e.key === 's' || e.key === 'ArrowDown') {
+        Input.keyState.down = true;
+        keyHit = true;
+      }
+      if (e.key === 'a' || e.key === 'ArrowLeft') {
+        Input.keyState.left = true;
+        keyHit = true;
+      }
+      if (e.key === 'd' || e.key === 'ArrowRight') {
+        Input.keyState.right = true;
+        keyHit = true;
+      }
+      if (e.key === 'Enter') {
+        Input.keyState.a = true;
+        keyHit = true;
+      }
+      if (e.key === 'Escape') {
+        Input.keyState.b = true;
+        keyHit = true;
+      }
+
+      if (keyHit) e.preventDefault();
     }, false);
 
     document.addEventListener('keyup', (e) => {
-      if (e.key === 'w' || e.key === 'ArrowUp') Input.keyState.up = false;
-      if (e.key === 's' || e.key === 'ArrowDown') Input.keyState.down = false;
-      if (e.key === 'a' || e.key === 'ArrowLeft') Input.keyState.left = false;
-      if (e.key === 'd' || e.key === 'ArrowRight') Input.keyState.right = false;
+      let keyHit = false;
 
-      if (e.key === 'Enter') Input.keyState.a = false;
-      if (e.key === 'Escape') Input.keyState.b = false;
+      if (e.key === 'w' || e.key === 'ArrowUp') {
+        Input.keyState.up = false;
+        keyHit = true;
+      }
+      if (e.key === 's' || e.key === 'ArrowDown') {
+        Input.keyState.down = false;
+        keyHit = true;
+      }
+      if (e.key === 'a' || e.key === 'ArrowLeft') {
+        Input.keyState.left = false;
+        keyHit = true;
+      }
+      if (e.key === 'd' || e.key === 'ArrowRight') {
+        Input.keyState.right = false;
+        keyHit = true;
+      }
+      if (e.key === 'Enter') {
+        Input.keyState.a = false;
+        keyHit = true;
+      }
+      if (e.key === 'Escape') {
+        Input.keyState.b = false;
+        keyHit = true;
+      }
+
+      if (keyHit) e.preventDefault();
     }, false);
 
     canvas.addEventListener('mousemove', (e) => {

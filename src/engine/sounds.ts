@@ -35,6 +35,26 @@ export enum Sound {
   SPELL_BAD = spellBadUrl,
 }
 
+export function preloadSounds(): void {
+  [
+    Sound.MENU_PICK,
+    Sound.MENU_CONFIRM,
+    Sound.BOOK,
+    Sound.NEW_CLIENT,
+    Sound.TABLE_MOVE,
+    Sound.BUBBLES,
+    Sound.GOOD_POTION,
+    Sound.BAD_POTION,
+    Sound.KNIFE,
+    Sound.SPELL,
+    Sound.SPELL_BAD,
+  ].forEach((s) => {
+    // Force the browser to download sound files
+    const audio = new Audio(s.toString());
+    audio.load();
+  });
+}
+
 export function playSound(sound: Sound, loop: boolean = false): (() => void) {
   const audio = new Audio(sound.toString());
   audio.loop = loop;
