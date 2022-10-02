@@ -26,6 +26,7 @@ export class WorkshopStage extends Stage {
   goldAtTheStartOfTheDay = 0;
 
   onActivate(): void {
+    Engine.saveGame();
     Engine.state.day += 1;
     this.goldAtTheStartOfTheDay = Engine.state.gold;
   }

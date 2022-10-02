@@ -2,8 +2,7 @@ import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { Input } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
-import { generateRecipes } from 'src/game/recipes';
-import { WorkshopStage } from 'src/game/workshop-stage';
+import { MainMenuStage } from 'src/main-menu-stage';
 
 const canvas: HTMLCanvasElement = document.querySelector('canvas')!;
 const context: CanvasRenderingContext2D = canvas.getContext('2d')!;
@@ -35,18 +34,7 @@ function tick(): void {
   Font.initialize();
   await Textures.loadTextures();
 
-  Engine.state = { // TODO: Add save/load functionality
-    preparedIngredients: [],
-    recipes: generateRecipes(),
-    orders: [],
-    gold: 0,
-    completedOrders: 0,
-    messageBoard: { messages: [] },
-    day: 0,
-    goldLastDay: 0,
-  };
-
-  const initialStage = new WorkshopStage();
+  const initialStage = new MainMenuStage();
   Engine.changeStage(initialStage);
 
   tick();

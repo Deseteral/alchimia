@@ -52,6 +52,8 @@ import listPointerRightUrl from 'url:../../assets/list_pointer_right.png';
 import coinUrl from 'url:../../assets/coin.png';
 // @ts-ignore
 import circleUrl from 'url:../../assets/circle.png';
+// @ts-ignore
+import menuLogoUrl from 'url:../../assets/menu_logo.png';
 
 export interface Texture {
   normal: HTMLCanvasElement,
@@ -85,6 +87,7 @@ export abstract class Textures {
   static listPointerRightTexture: Texture;
   static coinTexture: Texture;
   static circleTexture: Texture;
+  static menuLogoTexture: Texture;
 
   static async loadTextures(): Promise<void> {
     Textures.burningTexture = await Textures.load(burningUrl);
@@ -113,6 +116,7 @@ export abstract class Textures {
     Textures.listPointerRightTexture = await Textures.load(listPointerRightUrl);
     Textures.coinTexture = await Textures.load(coinUrl);
     Textures.circleTexture = await Textures.load(circleUrl);
+    Textures.menuLogoTexture = await Textures.load(menuLogoUrl);
   }
 
   private static async load(url: string): Promise<Texture> {
