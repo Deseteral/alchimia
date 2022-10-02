@@ -1,5 +1,5 @@
 import { PreparedIngredient } from 'src/game/ingredients';
-import { Recipe, RECIPES } from 'src/game/recipes';
+import { Recipe } from 'src/game/recipes';
 
 export function preparedIngredientEquals(pi1: PreparedIngredient, pi2: PreparedIngredient): boolean {
   return ((pi1.ingredient === pi2.ingredient) && (pi1.action === pi2.action));
@@ -18,6 +18,6 @@ export function preparedIngredientListEquals(pl1: PreparedIngredient[], pl2: Pre
   return (c1 && c2);
 }
 
-export function findMatchingRecipe(pl: PreparedIngredient[]): (Recipe | null) {
-  return RECIPES.find((r) => preparedIngredientListEquals(r.ingredients, pl)) || null;
+export function findMatchingRecipe(pl: PreparedIngredient[], list: Recipe[]): (Recipe | null) {
+  return list.find((r) => preparedIngredientListEquals(r.ingredients, pl)) || null;
 }

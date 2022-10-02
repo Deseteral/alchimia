@@ -3,6 +3,7 @@ import { Font } from 'src/engine/font';
 import { Input } from 'src/engine/input';
 import { Textures } from 'src/engine/textures';
 import { Ingredient, IngredientAction } from 'src/game/ingredients';
+import { generateRecipes } from 'src/game/recipes';
 import { WorkshopStage } from 'src/game/workshop-stage';
 
 const canvas = document.querySelector('canvas')!;
@@ -48,6 +49,7 @@ function tick(): void {
       { ingredient: Ingredient.GOLD, action: IngredientAction.ENCHANTING },
       { ingredient: Ingredient.FLOWER, action: IngredientAction.ENCHANTING },
     ],
+    recipes: generateRecipes(),
   };
 
   const initialStage = new WorkshopStage();

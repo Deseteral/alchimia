@@ -9,7 +9,7 @@ import { CuttingStation } from 'src/game/stations/cutting-station';
 import { EnchantmentStation } from 'src/game/stations/enchantment-station';
 import { GrindingStation } from 'src/game/stations/grinding-station';
 import { Ingredient, IngredientAction, ingredientDisplayName, Ingredients, PreparedIngredient } from 'src/game/ingredients';
-import { drawPreparedIngredientRow, drawRecipe, getIngredientIcon, Recipe, RECIPES } from 'src/game/recipes';
+import { drawPreparedIngredientRow, drawRecipe, getIngredientIcon, Recipe } from 'src/game/recipes';
 import { Station, StationCompleteCallback } from 'src/game/stations/station';
 import { Table } from 'src/game/table';
 import { findMatchingRecipe } from 'src/game/recipe-logic';
@@ -184,7 +184,7 @@ class BrewingTable extends Table {
           }
         } else {
           if (this.selectedIngredientCursor === this.selectedIngredients.length) {
-            const recipe = findMatchingRecipe(this.selectedIngredients);
+            const recipe = findMatchingRecipe(this.selectedIngredients, Engine.state.recipes);
             if (recipe) {
               this.makingRecipe = recipe;
               this.ticksUntilBrewingDone = Math.randomRange(3 * 60, 7 * 60);
@@ -346,19 +346,22 @@ export class WorkshopStage extends Stage {
     if (Input.getKeyDown('left')) this.pageNumber -= 1;
     if (Input.getKeyDown('right')) this.pageNumber += 1;
 
-    this.pageNumber = Math.clamp(this.pageNumber, 0, Math.ceil(RECIPES.length / 2) - 1);
+    this.pageNumber = Math.clamp(this.pageNumber, 0, Math.ceil(Engine.state.recipes.length / 2) - 1);
   }
 
   private renderBook(ctx: CanvasRenderingContext2D): void {
     ctx.drawImage(Textures.bookTexture.normal, 0, 0);
 
-    const r1 = RECIPES[this.pageNumber * 2];
-    const r2 = RECIPES[this.pageNumber * 2 + 1];
-    if (r1) drawRecipe(r1, 60, 20, ctx);
-    if (r2) drawRecipe(r2, 225, 20, ctx);
-
-    Font.draw(`${this.pageNumber * 2 + 1}`, 50, 200, ctx);
-    Font.draw(`${this.pageNumber * 2 + 2}`, 350, 200, ctx);
+    const r1: Recipe = Engine.state.recipes[this.pageNumber * 2];
+    const r2: Recipe = Engine.state.recipes[this.pageNumber * 2 + 1];
+    if (r1) {
+      drawRecipe(r1, 60, 20, ctx);
+      Font.draw(`${this.pageNumber * 2 + 1}`, 50, 200, ctx);
+    }
+    if (r2) {
+      drawRecipe(r2, 225, 20, ctx);
+      Font.draw(`${(this.pageNumber * 2 + 2).toString().padStart(2, ' ')}`, 340, 200, ctx);
+    }
   }
 
   private openBook(): void {

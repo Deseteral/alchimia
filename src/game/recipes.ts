@@ -1,35 +1,12 @@
 import { Font } from 'src/engine/font';
 import { Textures } from 'src/engine/textures';
-import { Ingredient, IngredientAction, PreparedIngredient } from 'src/game/ingredients';
+import { Ingredient, IngredientAction, IngredientActions, Ingredients, PreparedIngredient } from 'src/game/ingredients';
+import { preparedIngredientEquals } from 'src/game/recipe-logic';
 
 export interface Recipe {
   name: string,
   ingredients: PreparedIngredient[],
 }
-
-export const RECIPES: Recipe[] = [
-  {
-    name: 'Potion 1',
-    ingredients: [
-      { ingredient: Ingredient.HERB, action: IngredientAction.CUTTING },
-    ],
-  }, {
-    name: 'Potion 2',
-    ingredients: [
-      { ingredient: Ingredient.HERB, action: IngredientAction.CUTTING },
-      { ingredient: Ingredient.STONE, action: IngredientAction.GRIDING },
-    ],
-  }, {
-    name: 'Potion 3',
-    ingredients: [
-      { ingredient: Ingredient.HERB, action: IngredientAction.CUTTING },
-      { ingredient: Ingredient.STONE, action: IngredientAction.GRIDING },
-      { ingredient: Ingredient.MUSHROOM, action: IngredientAction.BURNING },
-      { ingredient: Ingredient.GOLD, action: IngredientAction.ENCHANTING },
-      { ingredient: Ingredient.FLOWER, action: IngredientAction.ENCHANTING },
-    ],
-  },
-];
 
 export function getIngredientIcon(ingredient: Ingredient): HTMLCanvasElement {
   switch (ingredient) {
@@ -66,4 +43,37 @@ export function drawRecipe(recipe: Recipe, x: number, y: number, ctx: CanvasRend
     const yy: number = y + 40 + (16 + 5) * idx;
     drawPreparedIngredientRow(ing, xx, yy, ctx);
   });
+}
+
+export function generateRecipes(): Recipe[] {
+  const recipes: Recipe[] = [];
+
+  for (let recipeIdx = 0; recipeIdx < 15; recipeIdx += 1) {
+    const ingredientCount = recipeIdx <= 5 ? Math.randomRange(1, 2) : Math.randomRange(3, 5);
+    const ingredients: PreparedIngredient[] = [];
+
+    for (let ingredientIdx = 0; ingredientIdx < ingredientCount; ingredientIdx += 1) {
+      let good = false;
+      let tries = 10;
+
+      while (!good && tries >= 0) {
+        const ingredientId = Math.randomRange(0, (Ingredients.length - 1));
+        const actionId = Math.randomRange(0, (IngredientActions.length - 1));
+        const pi: PreparedIngredient = { ingredient: Ingredients[ingredientId], action: IngredientActions[actionId] };
+
+        const foundIdx = ingredients.findIndex((pp) => preparedIngredientEquals(pi, pp));
+
+        if (foundIdx === -1) {
+          ingredients.push(pi);
+          good = true;
+        }
+
+        tries -= 1;
+      }
+    }
+
+    recipes.push({ name: `Recipe ${recipeIdx + 1}`, ingredients });
+  }
+
+  return recipes;
 }

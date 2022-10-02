@@ -21,6 +21,13 @@ export enum IngredientAction {
   ENCHANTING,
 }
 
+export const IngredientActions = [
+  IngredientAction.CUTTING,
+  IngredientAction.GRIDING,
+  IngredientAction.BURNING,
+  IngredientAction.ENCHANTING,
+];
+
 export interface PreparedIngredient {
   ingredient: Ingredient,
   action: IngredientAction,
