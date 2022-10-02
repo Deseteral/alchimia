@@ -41,6 +41,7 @@ function tick(): void {
     orders: [],
     gold: 0,
     completedOrders: 0,
+    messageBoard: { messages: [] },
   };
 
   const initialStage = new WorkshopStage();

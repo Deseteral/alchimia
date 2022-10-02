@@ -68,12 +68,17 @@ class ClientTable extends Table {
     // max line len 37
     const messageFrameWidth: number = 260;
     drawFrame(11 + 118, 11 + 34, messageFrameWidth, 184, ctx, () => {
-      ['line 1 and how long it can be wow eve', 'line 2', 'line 3', 'line 4', 'line 5', 'line 6', 'line 7', 'line 8', 'line 9'].forEach((msg, idx) => {
-        const drawFromRight: boolean = idx % 2 === 0;
+      let line = 0;
+      [...Engine.state.messageBoard.messages].reverse().forEach((message) => {
         const basexx: number = 11 + 118;
-        const xx: number = drawFromRight ? (basexx + messageFrameWidth - Font.lineLengthPx(msg, true) + 15) : basexx;
-        const yy: number = 205 - (idx * ((Font.glyphSizeV / 3) | 0));
-        Font.draw(msg, xx, yy, ctx, true);
+
+        [...message.text].reverse().forEach((txt) => {
+          const xx: number = message.rightSide ? (basexx + messageFrameWidth - Font.lineLengthPx(txt, true) + 15) : basexx;
+          const yy: number = 205 - (line * ((Font.glyphSizeV / 3) | 0));
+          Font.draw(txt, xx, yy, ctx, true);
+
+          line += 1;
+        });
       });
     });
   }
