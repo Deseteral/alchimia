@@ -139,10 +139,10 @@ class IngredientsTable extends Table {
   render(ctx: CanvasRenderingContext2D): void {
     ctx.drawImage(Textures.tableTexture.normal, 0, 0);
 
-    this.drawStation(Textures.cuttingTexture, 50, 110, this.selectedStation === 0, ctx);
-    this.drawStation(Textures.grindingTexture, 120, 110, this.selectedStation === 1, ctx);
-    this.drawStation(Textures.burningTexture, 185, 110, this.selectedStation === 2, ctx);
-    this.drawStation(Textures.enchantingTexture, 260, 110, this.selectedStation === 3, ctx);
+    this.drawStation(Textures.cuttingTexture, 10, 40, this.selectedStation === 0, ctx);
+    this.drawStation(Textures.grindingTexture, 106, 93, this.selectedStation === 1, ctx);
+    this.drawStation(Textures.burningTexture, 190, 25, this.selectedStation === 2, ctx);
+    this.drawStation(Textures.enchantingTexture, 305, 100, this.selectedStation === 3, ctx);
 
     if (this.isIndredientPickerOpen) {
       drawFrame(11, 11, 120, 97, ctx, () => {
@@ -160,7 +160,8 @@ class IngredientsTable extends Table {
   }
 
   private drawStation(texture: Texture, x: number, y: number, isSelected: boolean, ctx: CanvasRenderingContext2D): void {
-    if (isSelected) ctx.drawRect(x, y, texture.normal.width, texture.normal.height);
+    const frameOffset = 4;
+    if (isSelected) ctx.drawRect(x - frameOffset, y - frameOffset, texture.normal.width + frameOffset * 2, texture.normal.height + frameOffset * 2);
     ctx.drawImage(texture.normal, x, y);
   }
 
@@ -410,10 +411,12 @@ export class WorkshopStage extends Stage {
 
     const r1: Recipe = Engine.state.recipes[this.pageNumber * 2];
     const r2: Recipe = Engine.state.recipes[this.pageNumber * 2 + 1];
+
     if (r1) {
       drawRecipe(r1, 60, 20, ctx);
       Font.draw(`${this.pageNumber * 2 + 1}`, 50, 200, ctx);
     }
+
     if (r2) {
       drawRecipe(r2, 225, 20, ctx);
       Font.draw(`${(this.pageNumber * 2 + 2).toString().padStart(2, ' ')}`, 340, 200, ctx);
