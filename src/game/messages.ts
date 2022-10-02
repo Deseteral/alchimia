@@ -117,6 +117,8 @@ export function orderCompleteMessage(recipe: Recipe): Message {
   };
 }
 
+// TODO: Add goodbye message
+
 export function recipeDoesNotExistMessage(): Message {
   const list: string[] = [
     'What is that? Ugh!',
@@ -131,7 +133,7 @@ export function recipeDoesNotExistMessage(): Message {
   };
 }
 
-export function recipeWithoutOrder(): Message {
+export function recipeWithoutOrderMessage(): Message {
   const list: string[] = [
     "This is good, but why I've made this?",
     'Nobody wants this.',
@@ -141,6 +143,13 @@ export function recipeWithoutOrder(): Message {
 
   return {
     text: split(choice(list)),
+    rightSide: true,
+  };
+}
+
+export function dayOverMessage(): Message {
+  return {
+    text: split("It's getting late. Time to close the store."),
     rightSide: true,
   };
 }

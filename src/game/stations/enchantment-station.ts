@@ -11,6 +11,8 @@ interface Note {
   counted: boolean,
 }
 
+// TODO: Add particle effect when hitting the right note
+
 export class EnchantmentStation extends Station {
   readonly noteSize = 32;
   readonly hitLineX = 30 + ((this.noteSize / 2) | 0);

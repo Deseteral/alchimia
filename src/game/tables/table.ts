@@ -9,6 +9,6 @@ export abstract class Table {
     this.openBook = openBook;
   }
 
-  abstract update(isSelected: boolean): void;
+  abstract update(isSelected: boolean, ticksUntilDayOver: number): void;
   abstract render(ctx: CanvasRenderingContext2D): void;
 }

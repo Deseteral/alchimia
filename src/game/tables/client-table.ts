@@ -10,8 +10,8 @@ import { Table } from 'src/game/tables/table';
 export class ClientTable extends Table {
   nextClientAtTicks: number = 10 * 60;
 
-  update(isSelected: boolean): void {
-    if (Engine.ticks >= this.nextClientAtTicks) {
+  update(isSelected: boolean, ticksUntilDayOver: number): void {
+    if (Engine.ticks >= this.nextClientAtTicks && ticksUntilDayOver >= 0) {
       const recipeRange: number = (Engine.state.completedOrders <= 3) ? 5 : (Engine.state.recipes.length - 1);
       const recipeIdx: number = Math.randomRange(0, recipeRange);
       const recipe = Engine.state.recipes[recipeIdx];

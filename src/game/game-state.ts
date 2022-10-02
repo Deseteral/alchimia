@@ -9,4 +9,5 @@ export interface GameState {
   gold: number,
   completedOrders: number,
   messageBoard: MessageBoard,
+  day: number,
 }

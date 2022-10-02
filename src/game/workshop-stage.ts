@@ -1,8 +1,10 @@
+import { DaySummaryStage } from 'src/day-summary-stage';
 import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { Input } from 'src/engine/input';
 import { Stage } from 'src/engine/stage';
 import { Textures } from 'src/engine/textures';
+import { dayOverMessage } from 'src/game/messages';
 import { drawRecipe, Recipe } from 'src/game/recipes';
 import { BrewingTable } from 'src/game/tables/brewing-table';
 import { ClientTable } from 'src/game/tables/client-table';
@@ -19,16 +21,32 @@ export class WorkshopStage extends Stage {
   isInBookView: boolean = false;
   pageNumber = 0;
 
+  ticksUntilDayOver = (1 * 60 * 60); // 1 minute day
+
   update(): void {
+    this.ticksUntilDayOver -= 1;
+
+    // Book view
     if (this.isInBookView) {
       this.updateBook();
       return;
     }
 
+    // Update tables
     const thisFrameSelectedTable = this.selectedTable;
     this.tables.forEach((table, idx) => {
-      table.update(thisFrameSelectedTable === idx);
+      table.update(thisFrameSelectedTable === idx, this.ticksUntilDayOver);
     });
+
+    // Put day over message
+    if (this.ticksUntilDayOver === 0) {
+      Engine.state.messageBoard.messages.unshift(dayOverMessage());
+    }
+
+    // Transition to day summary screen
+    if (this.ticksUntilDayOver < 0 && Engine.state.orders.length === 0) {
+      Engine.changeStage(new DaySummaryStage());
+    }
   }
 
   render(ctx: CanvasRenderingContext2D): void {
