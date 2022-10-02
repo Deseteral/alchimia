@@ -11,7 +11,8 @@ export class GrindingStation extends Station {
   positionX = 130;
   positionY = 80;
   radius = this.positionY - 5;
-  targets = [0, 45, 90, 135, 180, 135, 90, 45];
+  targets = [0, 45, 90, 135, 180];
+  previousTargetHit: number = -1;
   progress = 0;
 
   progressDrawRadius = 0;
@@ -22,9 +23,19 @@ export class GrindingStation extends Station {
     const deg = Math.atan2(y, x) * (180 / Math.PI);
     const value = Math.abs(deg | 0);
 
-    const target = this.targets[0];
+    let targetHit: boolean = false;
     const offsetDeg = 5;
-    const targetHit = (value >= (target - offsetDeg) && value <= (target + offsetDeg));
+
+    for (let idx = 0; idx < this.targets.length; idx += 1) {
+      const target = this.targets[idx];
+      if (target === this.previousTargetHit) continue;
+
+      targetHit = (value >= (target - offsetDeg) && value <= (target + offsetDeg));
+      if (targetHit) {
+        this.previousTargetHit = target;
+        break;
+      }
+    }
 
     // TODO: Check if pointer is within circle
 
@@ -53,7 +64,7 @@ export class GrindingStation extends Station {
       ctx.drawImage(Textures.circleTexture.normal, xx, yy);
 
       // Progress fill
-      this.progressDrawRadius += ((this.progress * this.radius) - this.progressDrawRadius) * 0.1;
+      this.progressDrawRadius += ((this.progress * (this.radius - 3)) - this.progressDrawRadius) * 0.1;
 
       ctx.drawImage(
         Textures.circleTexture.inverted,
