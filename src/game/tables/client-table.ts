@@ -71,7 +71,7 @@ export class ClientTable extends Table {
     const messageFrameWidth: number = 260;
     drawFrame(11 + 118, 11 + 34, messageFrameWidth, 184, ctx, () => {
       let line = 0;
-      [...Engine.state.messageBoard.messages].reverse().forEach((message, msgIdx) => {
+      Engine.state.messageBoard.messages.forEach((message, msgIdx) => {
         const basexx: number = 11 + 118;
 
         [...message.text].reverse().forEach((txt) => {
