@@ -2,6 +2,7 @@ import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
+import { playSound, Sound } from 'src/engine/sounds';
 import { Textures } from 'src/engine/textures';
 import { newClientMessage } from 'src/game/messages';
 import { Recipe } from 'src/game/recipes';
@@ -20,7 +21,8 @@ export class ClientTable extends Table {
       this.nextClientAtTicks = Engine.ticks + (60 * 10); // I assume the game is running at 60 fps so we can use that to measure time, it's stupid but will be easier to implement pause.
 
       Engine.state.messageBoard.messages.unshift(newClientMessage(recipe));
-      console.log(Engine.state.messageBoard.messages);
+
+      playSound(Sound.NEW_CLIENT);
 
       console.log('new client with order', recipe);
     }

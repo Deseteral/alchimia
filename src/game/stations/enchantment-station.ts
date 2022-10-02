@@ -2,6 +2,7 @@ import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { drawFrame } from 'src/engine/frame';
 import { Input, Keys } from 'src/engine/input';
+import { playSound, Sound } from 'src/engine/sounds';
 import { Textures } from 'src/engine/textures';
 import { IngredientAction } from 'src/game/ingredients';
 import { Station } from 'src/game/stations/station';
@@ -49,11 +50,15 @@ export class EnchantmentStation extends Station {
             this.notes[idx].counted = true;
             noteWasHit = true;
             this.progress += 0.1;
+            playSound(Sound.SPELL);
           }
         }
 
         // When the key was pressed but the note was not hit
-        if (!noteWasHit) this.progress -= 0.1;
+        if (!noteWasHit) {
+          this.progress -= 0.1;
+          playSound(Sound.SPELL_BAD);
+        }
       }
     });
 

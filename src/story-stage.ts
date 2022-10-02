@@ -1,6 +1,7 @@
 import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { Input } from 'src/engine/input';
+import { playSound, Sound } from 'src/engine/sounds';
 import { Stage } from 'src/engine/stage';
 import { Textures } from 'src/engine/textures';
 import { WorkshopStage } from 'src/game/workshop-stage';
@@ -86,12 +87,19 @@ export class StoryStage extends Stage {
   }
 
   update(): void {
-    if (Input.getKeyDown('left')) this.pageNumber -= 1;
-    if (Input.getKeyDown('right')) this.pageNumber += 1;
+    if (Input.getKeyDown('left')) {
+      this.pageNumber -= 1;
+      playSound(Sound.BOOK);
+    }
+    if (Input.getKeyDown('right')) {
+      this.pageNumber += 1;
+      playSound(Sound.BOOK);
+    }
     this.pageNumber = Math.clamp(this.pageNumber, 0, Math.ceil(this.pages.length / 2) - 1);
 
     if (this.pageNumber === 5 && Input.getKeyDown('a')) {
       Engine.changeStage(new WorkshopStage());
+      playSound(Sound.MENU_CONFIRM);
     }
   }
 

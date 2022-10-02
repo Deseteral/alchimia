@@ -2,6 +2,7 @@ import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
+import { playSound, Sound } from 'src/engine/sounds';
 import { Stage } from 'src/engine/stage';
 import { Textures } from 'src/engine/textures';
 import { WorkshopStage } from 'src/game/workshop-stage';
@@ -16,8 +17,14 @@ export class MainMenuStage extends Stage {
   }
 
   update(): void {
-    if (Input.getKeyDown('up')) this.cursor -= 1;
-    if (Input.getKeyDown('down')) this.cursor += 1;
+    if (Input.getKeyDown('up')) {
+      this.cursor -= 1;
+      playSound(Sound.MENU_PICK);
+    }
+    if (Input.getKeyDown('down')) {
+      this.cursor += 1;
+      playSound(Sound.MENU_PICK);
+    }
 
     this.cursor = Math.clamp(this.cursor, 0, this.hasSaveData ? 2 : 1);
 
@@ -31,6 +38,8 @@ export class MainMenuStage extends Stage {
       } else if ((this.hasSaveData && this.cursor === 2) || (!this.hasSaveData && this.cursor === 1)) {
         Engine.changeStage(new HowToPlayStage());
       }
+
+      playSound(Sound.MENU_CONFIRM);
     }
   }
 

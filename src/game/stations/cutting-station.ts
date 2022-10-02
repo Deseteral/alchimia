@@ -2,6 +2,7 @@ import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
+import { playSound, Sound } from 'src/engine/sounds';
 import { Textures } from 'src/engine/textures';
 import { IngredientAction } from 'src/game/ingredients';
 import { Station } from 'src/game/stations/station';
@@ -14,11 +15,13 @@ export class CuttingStation extends Station {
     if (Input.getKeyDown('left') && this.left) {
       this.left = false;
       this.progress += 0.01;
+      playSound(Sound.KNIFE);
     }
 
     if (Input.getKeyDown('right') && !this.left) {
       this.left = true;
       this.progress += 0.05;
+      playSound(Sound.KNIFE);
     }
 
     this.progress -= 0.002;

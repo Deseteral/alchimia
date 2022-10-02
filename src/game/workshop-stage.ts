@@ -2,6 +2,7 @@ import { DaySummaryStage } from 'src/day-summary-stage';
 import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { Input } from 'src/engine/input';
+import { playSound, Sound } from 'src/engine/sounds';
 import { Stage } from 'src/engine/stage';
 import { Textures } from 'src/engine/textures';
 import { dayOverMessage } from 'src/game/messages';
@@ -73,11 +74,13 @@ export class WorkshopStage extends Stage {
   nextTable(): void {
     this.selectedTable += 1;
     this.selectedTable = Math.clamp(this.selectedTable, 0, 2);
+    playSound(Sound.TABLE_MOVE);
   }
 
   prevTable(): void {
     this.selectedTable -= 1;
     this.selectedTable = Math.clamp(this.selectedTable, 0, 2);
+    playSound(Sound.TABLE_MOVE);
   }
 
   onDestroy(): void {
@@ -88,9 +91,18 @@ export class WorkshopStage extends Stage {
   }
 
   private updateBook(): void {
-    if (Input.getKeyDown('up') || Input.getKeyDown('b')) this.isInBookView = false;
-    if (Input.getKeyDown('left')) this.pageNumber -= 1;
-    if (Input.getKeyDown('right')) this.pageNumber += 1;
+    if (Input.getKeyDown('up') || Input.getKeyDown('b')) {
+      this.isInBookView = false;
+      playSound(Sound.TABLE_MOVE);
+    }
+    if (Input.getKeyDown('left')) {
+      this.pageNumber -= 1;
+      playSound(Sound.BOOK);
+    }
+    if (Input.getKeyDown('right')) {
+      this.pageNumber += 1;
+      playSound(Sound.BOOK);
+    }
 
     this.pageNumber = Math.clamp(this.pageNumber, 0, Math.ceil(Engine.state.recipes.length / 2) - 1);
   }
@@ -116,5 +128,6 @@ export class WorkshopStage extends Stage {
 
   private openBook(): void {
     this.isInBookView = true;
+    playSound(Sound.TABLE_MOVE);
   }
 }

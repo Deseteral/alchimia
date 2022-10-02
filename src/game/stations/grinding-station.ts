@@ -2,6 +2,7 @@ import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
+import { playSound, Sound } from 'src/engine/sounds';
 import { Textures } from 'src/engine/textures';
 import { IngredientAction } from 'src/game/ingredients';
 import { Station } from 'src/game/stations/station';
@@ -33,6 +34,9 @@ export class GrindingStation extends Station {
       this.targets.push(firstElement);
 
       this.progress += 0.03; // TODO: Randomize progress value
+
+      playSound(Sound.KNIFE);
+
       console.log('hit, next target', this.targets[0]);
     }
 

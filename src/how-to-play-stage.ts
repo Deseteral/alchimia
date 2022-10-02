@@ -1,6 +1,7 @@
 import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { Input } from 'src/engine/input';
+import { playSound, Sound } from 'src/engine/sounds';
 import { Stage } from 'src/engine/stage';
 import { MainMenuStage } from 'src/main-menu-stage';
 
@@ -27,7 +28,10 @@ export class HowToPlayStage extends Stage {
   }
 
   update(): void {
-    if (Input.getKeyDown('b')) Engine.changeStage(new MainMenuStage());
+    if (Input.getKeyDown('b')) {
+      Engine.changeStage(new MainMenuStage());
+      playSound(Sound.MENU_CONFIRM);
+    }
   }
 
   render(ctx: CanvasRenderingContext2D): void {

@@ -2,6 +2,7 @@ import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
+import { playSound, Sound } from 'src/engine/sounds';
 import { Textures } from 'src/engine/textures';
 import { PreparedIngredient } from 'src/game/ingredients';
 import { orderCompleteMessage, recipeDoesNotExistMessage, recipeWithoutOrderMessage } from 'src/game/messages';
@@ -21,6 +22,7 @@ export class BrewingTable extends Table {
   makingRecipe: (Recipe | null) = null;
 
   bubbleParticles: ({ x: number, y: number, velocity: number, isSmall: boolean, offset: number })[] = [];
+  stopBubbleSoundCallback: ((() => void) | null) = null;
 
   update(isSelected: boolean): void {
     this.ticksUntilBrewingDone -= 1;
@@ -32,19 +34,23 @@ export class BrewingTable extends Table {
         } else {
           this.selectedIngredientCursor -= 1;
         }
+        playSound(Sound.MENU_PICK);
       } else if (Input.getKeyDown('down')) {
         if (this.leftColumn) {
           this.ingredientCursor += 1;
         } else {
           this.selectedIngredientCursor += 1;
         }
+        playSound(Sound.MENU_PICK);
       }
 
       if (Input.getKeyDown('left') && Engine.state.preparedIngredients.length > 0) {
         this.leftColumn = true;
+        playSound(Sound.MENU_PICK);
       } else if (Input.getKeyDown('right') && this.selectedIngredients.length > 0) {
         this.selectedIngredientCursor = this.selectedIngredients.length;
         this.leftColumn = false;
+        playSound(Sound.MENU_PICK);
       }
 
       if (Input.getKeyDown('b')) {
@@ -72,6 +78,8 @@ export class BrewingTable extends Table {
             this.makingRecipe = recipe;
             this.ticksUntilBrewingDone = Math.randomRange(3 * 60, 7 * 60);
 
+            this.stopBubbleSoundCallback = playSound(Sound.BUBBLES, true);
+
             if (recipe) {
               console.log('making recipe', recipe);
             } else {
@@ -88,6 +96,7 @@ export class BrewingTable extends Table {
             if (this.selectedIngredients.length === 0) this.leftColumn = true;
           }
         }
+        playSound(Sound.MENU_CONFIRM);
       }
 
       this.ingredientCursor = Math.clamp(this.ingredientCursor, 0, Engine.state.preparedIngredients.length - 1);
@@ -139,16 +148,25 @@ export class BrewingTable extends Table {
 
           Engine.state.messageBoard.messages.unshift(orderCompleteMessage(this.makingRecipe));
 
+          playSound(Sound.GOOD_POTION);
+
           console.log(`completed order ${recipeInOrdersIdx}`);
         } else {
           Engine.state.messageBoard.messages.unshift(recipeWithoutOrderMessage());
+          playSound(Sound.BAD_POTION);
           console.log('made potion but nobody ordered it', this.makingRecipe);
         }
 
         this.makingRecipe = null;
       } else {
         Engine.state.messageBoard.messages.unshift(recipeDoesNotExistMessage());
+        playSound(Sound.BAD_POTION);
         console.log('made potion that does not exist');
+      }
+
+      if (this.stopBubbleSoundCallback) {
+        this.stopBubbleSoundCallback();
+        this.stopBubbleSoundCallback = null;
       }
     }
   }

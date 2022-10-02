@@ -2,6 +2,7 @@ import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { drawFrame } from 'src/engine/frame';
 import { Input } from 'src/engine/input';
+import { playSound, Sound } from 'src/engine/sounds';
 import { Textures, Texture } from 'src/engine/textures';
 import { Ingredient, Ingredients, IngredientAction, ingredientDisplayName } from 'src/game/ingredients';
 import { getIngredientIcon } from 'src/game/recipes';
@@ -33,12 +34,19 @@ export class IngredientsTable extends Table {
 
     if (!this.isIndredientPickerOpen && Input.getKeyDown('a') && this.canUseInput(isSelected)) {
       this.isIndredientPickerOpen = true;
+      playSound(Sound.MENU_CONFIRM);
       return;
     }
 
     if (this.isIndredientPickerOpen && isSelected) {
-      if (Input.getKeyDown('up')) this.ingredientCursor -= 1;
-      if (Input.getKeyDown('down')) this.ingredientCursor += 1;
+      if (Input.getKeyDown('up')) {
+        this.ingredientCursor -= 1;
+        playSound(Sound.MENU_PICK);
+      }
+      if (Input.getKeyDown('down')) {
+        this.ingredientCursor += 1;
+        playSound(Sound.MENU_PICK);
+      }
       if (Input.getKeyDown('b')) {
         this.isIndredientPickerOpen = false;
         this.ingredientCursor = 0;
@@ -57,6 +65,9 @@ export class IngredientsTable extends Table {
             for (let a = 0; a < amount; a += 1) {
               Engine.state.preparedIngredients.push({ ingredient: selectedIngredient, action });
             }
+
+            playSound(Sound.GOOD_POTION);
+
             console.log(`preparing ingredient successful, receiving ${amount}`);
           }
           this.exitStation();
@@ -71,13 +82,20 @@ export class IngredientsTable extends Table {
         } else if (this.selectedStation === 3) {
           this.activeStation = new EnchantmentStation(cb);
         }
+
+        playSound(Sound.MENU_CONFIRM);
       }
 
       return;
     }
 
-    if (Input.getKeyDown('right') && this.canUseInput(isSelected)) this.selectedStation += 1;
-    if (Input.getKeyDown('left') && this.canUseInput(isSelected)) this.selectedStation -= 1;
+    const prevSlectedStation = this.selectedStation;
+    if (Input.getKeyDown('right') && this.canUseInput(isSelected)) {
+      this.selectedStation += 1;
+    }
+    if (Input.getKeyDown('left') && this.canUseInput(isSelected)) {
+      this.selectedStation -= 1;
+    }
 
     if (this.selectedStation < 0) {
       this.onPreviousTableCb();
@@ -88,6 +106,7 @@ export class IngredientsTable extends Table {
     }
 
     this.selectedStation = Math.clamp(this.selectedStation, 0, 3);
+    if (this.selectedStation !== prevSlectedStation) playSound(Sound.MENU_PICK);
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -121,7 +140,7 @@ export class IngredientsTable extends Table {
 
   private exitStation(): void {
     this.activeStation = null;
-    this.ignoringInputTicks = (1.5 * 60) | 0;
+    this.ignoringInputTicks = (0.5 * 60) | 0;
   }
 
   private canUseInput(isSelected: boolean): boolean {
