@@ -23,6 +23,13 @@ export class WorkshopStage extends Stage {
 
   ticksUntilDayOver = (1 * 60 * 60); // 1 minute day
 
+  goldAtTheStartOfTheDay = 0;
+
+  onActivate(): void {
+    Engine.state.day += 1;
+    this.goldAtTheStartOfTheDay = Engine.state.gold;
+  }
+
   update(): void {
     this.ticksUntilDayOver -= 1;
 
@@ -68,6 +75,13 @@ export class WorkshopStage extends Stage {
   prevTable(): void {
     this.selectedTable -= 1;
     this.selectedTable = Math.clamp(this.selectedTable, 0, 2);
+  }
+
+  onDestroy(): void {
+    Engine.state.messageBoard = { messages: [] };
+    Engine.state.orders = [];
+
+    Engine.state.goldLastDay = Engine.state.gold - this.goldAtTheStartOfTheDay;
   }
 
   private updateBook(): void {

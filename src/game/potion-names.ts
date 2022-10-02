@@ -13,7 +13,6 @@ export const POTION_NAMES: string[] = [
   'Ravyzo',
   'Fyshlell',
   'Kolnill',
-  'Mail',
   'Sall',
   'Miodh',
   'Madadh',

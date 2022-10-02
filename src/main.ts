@@ -1,3 +1,4 @@
+import { DaySummaryStage } from 'src/day-summary-stage';
 import { Engine } from 'src/engine/engine';
 import { Font } from 'src/engine/font';
 import { Input } from 'src/engine/input';
@@ -42,7 +43,8 @@ function tick(): void {
     gold: 0,
     completedOrders: 0,
     messageBoard: { messages: [] },
-    day: 1,
+    day: 0,
+    goldLastDay: 0,
   };
 
   const initialStage = new WorkshopStage();

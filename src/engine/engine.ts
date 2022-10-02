@@ -16,6 +16,8 @@ export abstract class Engine {
   static shouldCountTicks: boolean = true;
 
   static changeStage(nextStage: Stage): void {
+    this.activeStage?.onDestroy();
     this.activeStage = nextStage;
+    this.activeStage.onActivate();
   }
 }

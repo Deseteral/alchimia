@@ -1,13 +1,14 @@
-import { Stage } from 'src/engine/stage';
 import { IngredientAction } from 'src/game/ingredients';
 
 export type StationCompleteCallback = (success: boolean, action: IngredientAction) => void
 
-export abstract class Station extends Stage {
+export abstract class Station {
   onStationCompleteCallback: StationCompleteCallback;
 
   constructor(cb: StationCompleteCallback) {
-    super();
     this.onStationCompleteCallback = cb;
   }
+
+  abstract update(): void;
+  abstract render(ctx: CanvasRenderingContext2D): void;
 }

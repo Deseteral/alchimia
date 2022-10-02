@@ -42,12 +42,14 @@ export class ClientTable extends Table {
     });
 
     drawFrame(11 + 118, 11, 260, 16, ctx, () => {
+      const dayMessage = `Day ${Engine.state.day}`;
+
       // Time counter
       const secondsUnitlNextClient: number = 10 - Math.round((this.nextClientAtTicks - Engine.ticks) / 60);
 
       for (let tidx = 0; tidx < 10; tidx += 1) {
         const size = 5;
-        const xx = 11 + 118 + 10 + (tidx * (size + 2));
+        const xx = 11 + 100 + Font.lineLengthPx(dayMessage, false) + (tidx * (size + 2));
         const yy = 17;
         if (tidx < secondsUnitlNextClient) {
           ctx.fillRect(xx, yy, size, size);
@@ -56,7 +58,10 @@ export class ClientTable extends Table {
         }
       }
 
+      Font.draw(dayMessage, 11 + 118, 5, ctx);
+
       // Gold
+      // TODO: Make text right-aligned
       ctx.drawImage(Textures.coinTexture.normal, 300, 11);
       Font.draw(Engine.state.gold.toString(), 300 + 16 + 2, 5, ctx);
     });

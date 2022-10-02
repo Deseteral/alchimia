@@ -5,9 +5,13 @@ import { Recipe } from 'src/game/recipes';
 export interface GameState {
   preparedIngredients: PreparedIngredient[],
   recipes: Recipe[],
-  orders: Recipe[],
-  gold: number,
-  completedOrders: number,
-  messageBoard: MessageBoard,
+
   day: number,
+
+  gold: number,
+  goldLastDay: number,
+  completedOrders: number,
+
+  orders: Recipe[],
+  messageBoard: MessageBoard,
 }
