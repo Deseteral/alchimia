@@ -41,6 +41,7 @@ export class IngredientsTable extends Table {
       if (Input.getKeyDown('down')) this.ingredientCursor += 1;
       if (Input.getKeyDown('b')) {
         this.isIndredientPickerOpen = false;
+        this.ingredientCursor = 0;
         return;
       }
       this.ingredientCursor = Math.clamp(this.ingredientCursor, 0, 5 - 1);
