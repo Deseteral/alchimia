@@ -35,7 +35,7 @@ export class WorkshopStage extends Stage {
   }
 
   update(): void {
-    this.ticksUntilDayOver -= 1;
+    if (Engine.shouldCountTicks) this.ticksUntilDayOver -= 1;
 
     // Book view
     if (this.isInBookView) {
@@ -97,8 +97,7 @@ export class WorkshopStage extends Stage {
 
   private updateBook(): void {
     if (Input.getKeyDown('up') || Input.getKeyDown('b')) {
-      this.isInBookView = false;
-      playSound(Sound.TABLE_MOVE);
+      this.closeBook();
     }
     if (Input.getKeyDown('left')) {
       this.pageNumber -= 1;
@@ -132,7 +131,14 @@ export class WorkshopStage extends Stage {
   }
 
   private openBook(): void {
+    Engine.shouldCountTicks = false;
     this.isInBookView = true;
+    playSound(Sound.TABLE_MOVE);
+  }
+
+  private closeBook(): void {
+    Engine.shouldCountTicks = true;
+    this.isInBookView = false;
     playSound(Sound.TABLE_MOVE);
   }
 }

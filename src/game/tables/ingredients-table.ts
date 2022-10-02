@@ -23,8 +23,6 @@ export class IngredientsTable extends Table {
   ignoringInputTicks = 0;
 
   update(isSelected: boolean): void {
-    Engine.shouldCountTicks = !this.activeStation;
-
     if (this.activeStation && isSelected) {
       this.activeStation.update();
       return;
@@ -82,6 +80,8 @@ export class IngredientsTable extends Table {
         } else if (this.selectedStation === 3) {
           this.activeStation = new EnchantmentStation(cb);
         }
+
+        Engine.shouldCountTicks = false;
 
         playSound(Sound.MENU_CONFIRM);
       }
@@ -141,6 +141,7 @@ export class IngredientsTable extends Table {
   private exitStation(): void {
     this.activeStation = null;
     this.ignoringInputTicks = (0.5 * 60) | 0;
+    Engine.shouldCountTicks = true;
   }
 
   private canUseInput(isSelected: boolean): boolean {
