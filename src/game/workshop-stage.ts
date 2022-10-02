@@ -21,7 +21,16 @@ class ClientTable extends Table {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    ctx.fillRect(10, 10, 50, 50);
+    drawFrame(11, 11, 100, 218, ctx, () => {
+      Font.draw('Orders', 12, 6, ctx);
+
+      for (let idx = 0; idx < Engine.state.orders.length; idx += 1) {
+        const orderRecipe: Recipe = Engine.state.orders[idx];
+
+        const yy: number = Font.glyphSizeV + idx * (16 + 4);
+        Font.draw(orderRecipe.name, 11, yy, ctx);
+      }
+    });
   }
 }
 

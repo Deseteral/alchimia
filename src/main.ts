@@ -50,6 +50,7 @@ function tick(): void {
       { ingredient: Ingredient.FLOWER, action: IngredientAction.ENCHANTING },
     ],
     recipes: generateRecipes(),
+    orders: [],
   };
 
   const initialStage = new WorkshopStage();
