@@ -19,7 +19,7 @@ class ClientTable extends Table {
 
   update(): void {
     if (Engine.ticks >= this.nextClientAtTicks) {
-      const recipeRange: number = (Engine.state.completedOrders < 5) ? 5 : (Engine.state.recipes.length - 1);
+      const recipeRange: number = (Engine.state.completedOrders <= 3) ? 5 : (Engine.state.recipes.length - 1);
       const recipeIdx: number = Math.randomRange(0, recipeRange);
       const recipe = Engine.state.recipes[recipeIdx];
       Engine.state.orders.push(recipe);
@@ -398,7 +398,7 @@ export class WorkshopStage extends Stage {
   }
 
   private updateBook(): void {
-    if (Input.getKeyDown('up')) this.isInBookView = false;
+    if (Input.getKeyDown('up') || Input.getKeyDown('b')) this.isInBookView = false;
     if (Input.getKeyDown('left')) this.pageNumber -= 1;
     if (Input.getKeyDown('right')) this.pageNumber += 1;
 
