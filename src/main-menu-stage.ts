@@ -44,17 +44,19 @@ export class MainMenuStage extends Stage {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
+    ctx.drawRect(0, 0, Engine.width, Engine.height);
+
     ctx.drawImage(Textures.menuLogoTexture.normal, 0, 0);
 
-    const w = 130;
-    const h = 150;
+    const w = 132;
+    const h = 82;
     const x = (Engine.width - w) / 2;
-    const y = 80;
+    const y = 90;
 
     drawFrame(x, y, w, h, ctx, () => {
       const mx = x + 16 + 2;
 
-      ctx.drawImage(Textures.listPointerRightTexture.normal, x, y + 5 + 30 * this.cursor);
+      ctx.drawImage(Textures.listPointerRightTexture.normal, x, y + 2 + (30 * this.cursor));
 
       Font.draw('New game', mx, y, ctx);
 

@@ -71,8 +71,9 @@ export class StoryStage extends Stage {
       'your own potion store.',
     ],
     [
-      "You're living the dream.",
-      'Good luck and have fun!',
+      "You're living the",
+      'dream. Good luck and',
+      'have fun!',
     ],
     [
       '',
@@ -111,7 +112,7 @@ export class StoryStage extends Stage {
 
     if (t1) {
       t1.forEach((line, idx) => {
-        Font.draw(line, 47, 20 + idx * 20, ctx, true);
+        Font.draw(line, 47, 24 + idx * (Font.charHeightSmall + 2), ctx, true);
       });
 
       Font.draw(`${this.pageNumber * 2 + 1}`, 50, 200, ctx);
@@ -119,7 +120,7 @@ export class StoryStage extends Stage {
 
     if (t2) {
       t2.forEach((line, idx) => {
-        Font.draw(line, 212, 20 + idx * 20, ctx, true);
+        Font.draw(line, 212, 24 + idx * (Font.charHeightSmall + 2), ctx, true);
       });
 
       Font.draw(`${(this.pageNumber * 2 + 2).toString().padStart(2, ' ')}`, 340, 200, ctx);

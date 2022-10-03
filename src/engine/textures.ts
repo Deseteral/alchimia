@@ -54,6 +54,10 @@ import coinUrl from 'url:../../assets/coin.png';
 import circleUrl from 'url:../../assets/circle.png';
 // @ts-ignore
 import menuLogoUrl from 'url:../../assets/menu_logo.png';
+// @ts-ignore
+import fontUrl from 'url:../../assets/font.png';
+// @ts-ignore
+import fontSmallUrl from 'url:../../assets/font_small.png';
 
 export interface Texture {
   normal: HTMLCanvasElement,
@@ -88,6 +92,8 @@ export abstract class Textures {
   static coinTexture: Texture;
   static circleTexture: Texture;
   static menuLogoTexture: Texture;
+  static fontTexture: Texture;
+  static fontSmallTexture: Texture;
 
   static async loadTextures(): Promise<void> {
     Textures.burningTexture = await Textures.load(burningUrl);
@@ -117,6 +123,8 @@ export abstract class Textures {
     Textures.coinTexture = await Textures.load(coinUrl);
     Textures.circleTexture = await Textures.load(circleUrl);
     Textures.menuLogoTexture = await Textures.load(menuLogoUrl);
+    Textures.fontTexture = await Textures.load(fontUrl);
+    Textures.fontSmallTexture = await Textures.load(fontSmallUrl);
   }
 
   private static async load(url: string): Promise<Texture> {

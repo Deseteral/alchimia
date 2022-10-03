@@ -121,10 +121,10 @@ export class IngredientsTable extends Table {
       drawFrame(11, 11, 120, 97, ctx, () => {
         Ingredients.forEach((ing, idx) => {
           const xx: number = 11;
-          const yy: number = 6 + idx * (Font.glyphSizeV / 2);
+          const yy: number = 6 + idx * Font.charHeight;
           if (idx === this.ingredientCursor) ctx.drawImage(Textures.listPointerRightTexture.normal, xx, yy + 5);
           ctx.drawImage(getIngredientIcon(ing), xx + 16, yy + 5);
-          Font.draw(`${ingredientDisplayName(ing)}`, xx + 16 + 16 + 2, yy, ctx);
+          Font.draw(`${ingredientDisplayName(ing)}`, xx + 16 + 16 + 2, yy + 3, ctx);
         });
       });
     }

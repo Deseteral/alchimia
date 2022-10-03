@@ -53,7 +53,7 @@ export class CuttingStation extends Station {
 
     const helpWidth = 170;
     const helpX = Engine.width - helpWidth - 9 - 2;
-    drawFrame(helpX, yy, helpWidth, 30, ctx, () => {
+    drawFrame(helpX, yy, helpWidth, 26, ctx, () => {
       Font.draw('Press left and right key', helpX, yy, ctx, true);
       Font.draw('alternately to cut', helpX, yy + 12, ctx, true);
     });

@@ -141,7 +141,7 @@ export class EnchantmentStation extends Station {
     const helpWidth = 270;
     const helpX = 9 + 2;
     const helpY = 180;
-    drawFrame(helpX, helpY, helpWidth, 30, ctx, () => {
+    drawFrame(helpX, helpY, helpWidth, 26, ctx, () => {
       Font.draw("Press the proper key when it's passing", helpX, helpY, ctx, true);
       Font.draw('the line to enchant the ingredient', helpX, helpY + 12, ctx, true);
     });

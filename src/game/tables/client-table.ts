@@ -33,26 +33,29 @@ export class ClientTable extends Table {
 
   render(ctx: CanvasRenderingContext2D): void {
     drawFrame(11, 11, 100, 218, ctx, () => {
-      Font.draw('Orders', 12, 6, ctx);
+      Font.draw('Orders', 12, 8, ctx);
 
       for (let idx = 0; idx < Engine.state.orders.length; idx += 1) {
         const orderRecipe: Recipe = Engine.state.orders[idx];
 
-        const yy: number = Font.glyphSizeV + idx * (16 + 4);
-        Font.draw(orderRecipe.name, 11, yy, ctx);
+        const yy: number = 8 + Font.charHeight + 10 + (idx * (Font.charHeight + 4));
+        Font.draw(`-${orderRecipe.name}`, 11, yy, ctx);
       }
     });
 
-    drawFrame(11 + 118, 11, 260, 16, ctx, () => {
+    const infoFrameX = 11 + 118;
+    drawFrame(infoFrameX, 11, 260, 16, ctx, () => {
+      // Day counter
       const dayMessage = `Day ${Engine.state.day}`;
+      Font.draw(dayMessage, infoFrameX, 7, ctx);
 
       // Time counter
       const secondsUnitlNextClient: number = 10 - Math.round((this.nextClientAtTicks - Engine.ticks) / 60);
 
       for (let tidx = 0; tidx < 10; tidx += 1) {
         const size = 5;
-        const xx = 11 + 100 + Font.lineLengthPx(dayMessage, false) + (tidx * (size + 2));
-        const yy = 17;
+        const xx = infoFrameX + Font.lineLengthPx(dayMessage, false) + 5 + (tidx * (size + 2));
+        const yy = 16;
         if (tidx < secondsUnitlNextClient) {
           ctx.fillRect(xx, yy, size, size);
         } else {
@@ -60,12 +63,10 @@ export class ClientTable extends Table {
         }
       }
 
-      Font.draw(dayMessage, 11 + 118, 5, ctx);
-
       // Gold
       // TODO: Make text right-aligned
       ctx.drawImage(Textures.coinTexture.normal, 300, 11);
-      Font.draw(Engine.state.gold.toString(), 300 + 16 + 2, 5, ctx);
+      Font.draw(Engine.state.gold.toString(), 300 + 16 + 2, 7, ctx);
     });
 
     const messageFrameWidth: number = 260;
@@ -75,8 +76,8 @@ export class ClientTable extends Table {
         const basexx: number = 11 + 118;
 
         [...message.text].reverse().forEach((txt) => {
-          const xx: number = message.rightSide ? (basexx + messageFrameWidth - Font.lineLengthPx(txt, true) + 15) : basexx;
-          const yy: number = 205 - (line * ((Font.glyphSizeV / 3) | 0)) - (msgIdx * 7);
+          const xx: number = message.rightSide ? (basexx + messageFrameWidth - Font.lineLengthPx(txt, true)) : basexx;
+          const yy: number = 215 - (line * Font.charHeightSmall) - (msgIdx * 7);
           Font.draw(txt, xx, yy, ctx, true);
 
           line += 1;

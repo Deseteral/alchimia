@@ -8,7 +8,7 @@ import { IngredientAction } from 'src/game/ingredients';
 import { Station } from 'src/game/stations/station';
 
 export class GrindingStation extends Station {
-  positionX = 130;
+  positionX = 150;
   positionY = 80;
   radius = this.positionY - 5;
   targets = [0, 45, 90, 135, 180];
@@ -47,8 +47,6 @@ export class GrindingStation extends Station {
       this.progress += 0.03; // TODO: Randomize progress value
 
       playSound(Sound.KNIFE);
-
-      console.log('hit, next target', this.targets[0]);
     }
 
     if (this.progress >= 1) this.onStationCompleteCallback(true, IngredientAction.GRIDING);
@@ -75,9 +73,9 @@ export class GrindingStation extends Station {
       );
     });
 
-    const helpWidth = 170;
+    const helpWidth = 150;
     const helpX = Engine.width - helpWidth - 9 - 2;
-    drawFrame(helpX, yy, helpWidth, 42, ctx, () => {
+    drawFrame(helpX, yy, helpWidth, 39, ctx, () => {
       Font.draw('Move the mouse cursor', helpX, yy, ctx, true);
       Font.draw('around the circle to', helpX, yy + 12, ctx, true);
       Font.draw('grind the ingredient', helpX, yy + 12 * 2, ctx, true);

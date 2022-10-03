@@ -1,5 +1,4 @@
 import { Engine } from 'src/engine/engine';
-import { Font } from 'src/engine/font';
 import { Input } from 'src/engine/input';
 import { preloadSounds } from 'src/engine/sounds';
 import { Textures } from 'src/engine/textures';
@@ -32,7 +31,6 @@ function tick(): void {
 
   Input.initialize(canvas);
 
-  Font.initialize();
   preloadSounds();
   await Textures.loadTextures();
 

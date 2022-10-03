@@ -181,7 +181,7 @@ export class BrewingTable extends Table {
       const maxCountOnPage: number = 9;
 
       drawFrame(11, 11, listWidth, 218, ctx, () => {
-        Font.draw('Storage', 12, 6, ctx);
+        Font.draw('Storage', 12, 8, ctx);
 
         const page: number = (this.ingredientCursor / maxCountOnPage) | 0;
         const startIdx: number = page * maxCountOnPage;
@@ -189,7 +189,7 @@ export class BrewingTable extends Table {
         for (let idx = startIdx; idx < Math.min(startIdx + 9, Engine.state.preparedIngredients.length); idx += 1) {
           const pi: PreparedIngredient = Engine.state.preparedIngredients[idx];
 
-          const yy: number = Font.glyphSizeV + (idx % maxCountOnPage) * (16 + 4);
+          const yy: number = 11 + Font.charHeight + (idx % maxCountOnPage) * (16 + 4);
           if (idx === this.ingredientCursor && this.leftColumn) ctx.drawImage(Textures.listPointerRightTexture.normal, 11, yy);
           drawPreparedIngredientRow(pi, 11 + 16 + 4, yy, ctx);
         }
@@ -197,7 +197,7 @@ export class BrewingTable extends Table {
 
       const rightColumnX: number = 11 + listWidth + 20;
       drawFrame(rightColumnX, 11, listWidth, 218, ctx, () => {
-        Font.draw('Selected', rightColumnX + 1, 6, ctx);
+        Font.draw('Selected', rightColumnX + 1, 8, ctx);
 
         const page: number = (this.selectedIngredientCursor / maxCountOnPage) | 0;
         const startIdx: number = page * maxCountOnPage;
@@ -206,14 +206,16 @@ export class BrewingTable extends Table {
         for (let idx = startIdx; idx < Math.min(startIdx + 9, this.selectedIngredients.length); idx += 1) {
           const pi: PreparedIngredient = this.selectedIngredients[idx];
 
-          const yy: number = Font.glyphSizeV + (idx % maxCountOnPage) * (16 + 4);
+          const yy: number = 11 + Font.charHeight + (idx % maxCountOnPage) * (16 + 4);
           if (idx === this.selectedIngredientCursor && !this.leftColumn) ctx.drawImage(Textures.listPointerRightTexture.normal, rightColumnX, yy);
           drawPreparedIngredientRow(pi, rightColumnX + 16 + 4, yy, ctx);
         }
 
         if (this.selectedIngredients.length > 0 && page === (pageCount - 1)) {
-          const yy: number = Font.glyphSizeV + (this.selectedIngredients.length % maxCountOnPage) * (16 + 4);
-          if (this.selectedIngredientCursor === this.selectedIngredients.length && !this.leftColumn) ctx.drawImage(Textures.listPointerRightTexture.normal, rightColumnX, yy + 5);
+          const yy: number = 11 + Font.charHeight + (this.selectedIngredients.length % maxCountOnPage) * (16 + 4);
+          if (this.selectedIngredientCursor === this.selectedIngredients.length && !this.leftColumn) {
+            ctx.drawImage(Textures.listPointerRightTexture.normal, rightColumnX, yy + 1);
+          }
           Font.draw('Brew!', rightColumnX + 16 + 4, yy, ctx);
         }
       });
