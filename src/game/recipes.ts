@@ -48,6 +48,7 @@ export function drawRecipe(recipe: Recipe, x: number, y: number, ctx: CanvasRend
 
 export function generateRecipes(): Recipe[] {
   const recipes: Recipe[] = [];
+  const namePool: string[] = [...POTION_NAMES];
 
   for (let recipeIdx = 0; recipeIdx < 15; recipeIdx += 1) {
     let recipeGood = false;
@@ -77,13 +78,13 @@ export function generateRecipes(): Recipe[] {
         }
       }
 
-      const name: string = POTION_NAMES[Math.randomRange(0, POTION_NAMES.length - 1)];
-      const recipe: Recipe = { name, ingredients };
-
       recipeTries -= 1;
 
-      if (findMatchingRecipe(recipe.ingredients, recipes) === null) {
-        recipes.push(recipe);
+      if (findMatchingRecipe(ingredients, recipes) === null) {
+        const nameIdx = Math.randomRange(0, (namePool.length - 1));
+        const [name] = namePool.splice(nameIdx, 1);
+
+        recipes.push({ name, ingredients });
         recipeGood = true;
       }
     }
