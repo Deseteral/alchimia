@@ -78,7 +78,9 @@ export class BrewingTable extends Table {
             this.makingRecipe = recipe;
             this.ticksUntilBrewingDone = Math.randomRange(3 * 60, 7 * 60);
 
-            this.stopBubbleSoundCallback = playSound(Sound.BUBBLES, true);
+            if (!this.stopBubbleSoundCallback) {
+              this.stopBubbleSoundCallback = playSound(Sound.BUBBLES, true);
+            }
 
             if (recipe) {
               console.log('making recipe', recipe);
@@ -108,7 +110,7 @@ export class BrewingTable extends Table {
     if (isSelected) {
       if (Input.getKeyDown('left')) {
         this.onPreviousTableCb();
-      } else if (Input.getKeyDown('a')) {
+      } else if (Input.getKeyDown('a') && this.ticksUntilBrewingDone < 0) {
         this.resetListState();
         this.showList = true;
       } else if (Input.getKeyDown('down')) {
