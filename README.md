@@ -46,5 +46,10 @@ The game starts easy with limited ingredients and recipes. As you progress you u
 - burning (keeping falling indicator in the right place)
 - enchanting (qte)
 
+## Post Ludum Dare Playdate port
+Couple months after the release of orignal web version I've decided to port alchimia do Playdate console.
+
+You can check out the port in [alchimia-pd repo](https://github.com/Deseteral/alchmia-pd).
+
 ## License
 This game is licensed under the [MIT license](LICENSE).
