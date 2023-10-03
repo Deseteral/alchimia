@@ -6,7 +6,7 @@
 >
 > After 10 long years of studying and dreaming about your favorite place on the Continent you can finally fulfill your dreams.
 >
-> You take a small load and open your own potion shop. Will you be able to run your store and pay off the debt?
+> You take a small loan and open your own potion shop. Will you be able to run your store and pay off the debt?
 
 ![Cover image](promo_assets/itch_cover.png?raw=true "Cover image")
 
